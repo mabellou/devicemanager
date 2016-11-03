@@ -1,93 +1,27 @@
 <h4 class="blog-post-title">Devices</h4>
 <hr/>
-<button type="button" class="btn btn-danger fa fa-plus" ng-click="create(device);">&nbsp;Add New Device</button>
+<button type="button" class="btn btn-danger fa fa-plus" ng-click="create(device);" ng-if="currentuser.profile=='administrator'">&nbsp;Add New Device</button>
 <div class="table-responsive">
     <div class="panel panel-primary">
         <div class="panel-heading">List of devices
             <div class="sw-search">
                 <div class="nav-search" id="nav-search">
                     Filter: <span class="input-icon">
-                        <input placeholder="Filter devices list ..." class="nav-search-input" ng-model="filterDevice" ng-change="resetLimit();"  autocomplete="off" type="text" style="width:300px;" focus>
+                        <input placeholder="Filter devices list ..." class="nav-search-input" ng-model="filterdevices" ng-change="resetLimit();"  autocomplete="off" type="text" style="width:300px;" focus>
                         <i class="search-icon fa fa-search nav-search-icon"></i>
                     </span>
                 </div>
             </div>
         </div>
         <div class="panel-body">
-            <table class="table table-striped">
-                <tr ng-show="devices.length==0">
-                    <td style="vertical-align:middle;"><i class="fa fa-ban fa-3x"></i>&nbsp;No data found</td>
-                </tr>
-                <tr ng-hide="devices.length>-1">
-                    <td style="vertical-align:middle;"><i class="fa fa-cog fa-3x fa-spin"></i>&nbsp;Loading</td>
-                </tr>
-                <!-- column headers -->
-                <tr>
-                    <th ng-repeat="c in columns">{{c.text}}</th>
-                </tr>
-
-                <br>
-                <!-- list all my free devices -->
-               <tr ng-repeat="c in devices | filter:statusFilter('inuse') | filter:filterDevice | orderBy:'boxid'" id="{{c.boxid}}" animate-on-change='c.boxid + c.brand + c.model + c.os + c.osversion + c.screensize + c.devicetype + c.name + c.status' ng-animate=" 'animate'">
-                    <td>{{c.boxid}}</td>
-                    <td>{{c.brand}}</td>
-                    <td>{{c.model}}</td>
-                    <td>{{c.os}}</td>
-                    <td>{{c.osversion}}</td>
-                    <td>{{c.screensize}}</td>
-                    <td>{{c.devicetype}}</td>
-                    <td>
-                        <button class="btn" ng-class="{Available:'btn-success', Unavailable:''}[c.status]" ng-click="changeDeviceStatus(c);">{{c.devicestatus.status}}</button>
-                    </td>
-                    <td>{{c.devicestatus.user.fullname}}</td>
-                    <td style="width:100px">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-default fa fa-edit" ng-click="open(c);"></button>
-                            <button type="button" class="btn btn-danger fa fa-trash-o" ng-click="deleteDevice(c);"></button>
-                        </div>
-                    </td>
-                </tr>
-                <!-- list all my locked devices -->
-                <tr ng-repeat="c in devices | filter:statusFilter('locked') | filter:filterDevice | orderBy:'boxid'" id="{{c.boxid}}" animate-on-change='c.boxid + c.brand + c.model + c.os + c.osversion + c.screensize + c.devicetype + c.name + c.status' ng-animate=" 'animate'">
-                    <td>{{c.boxid}}</td>
-                    <td>{{c.brand}}</td>
-                    <td>{{c.model}}</td>
-                    <td>{{c.os}}</td>
-                    <td>{{c.osversion}}</td>
-                    <td>{{c.screensize}}</td>
-                    <td>{{c.devicetype}}</td>
-                    <td>
-                        <button class="btn" ng-class="{Available:'btn-success', Unavailable:''}[c.status]" ng-click="changeDeviceStatus(c);">{{c.devicestatus.status}}</button>
-                    </td>
-                    <td>{{c.devicestatus.user.fullname}}</td>
-                    <td style="width:100px">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-default fa fa-edit" ng-click="open(c);"></button>
-                            <button type="button" class="btn btn-danger fa fa-trash-o" ng-click="deleteDevice(c);"></button>
-                        </div>
-                    </td>
-                </tr>
-                <!-- list all devices, except those locked or in use by me -->
-                <tr ng-repeat="c in devices | filter:statusFilter() | filter:filterDevice | orderBy:'boxid'" id="{{c.boxid}}" animate-on-change='c.boxid + c.brand + c.model + c.os + c.osversion + c.screensize + c.devicetype + c.name + c.status' ng-animate=" 'animate'">
-                    <td>{{c.boxid}}</td>
-                    <td>{{c.brand}}</td>
-                    <td>{{c.model}}</td>
-                    <td>{{c.os}}</td>
-                    <td>{{c.osversion}}</td>
-                    <td>{{c.screensize}}</td>
-                    <td>{{c.devicetype}}</td>
-                    <td>
-                        <button class="btn" ng-class="{Available:'btn-success', Unavailable:''}[c.status]" ng-click="changeDeviceStatus(c);">{{c.devicestatus.status}}</button>
-                    </td>
-                    <td>{{c.devicestatus.user.fullname}}</td>
-                    <td style="width:100px">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-default fa fa-edit" ng-click="open(c);"></button>
-                            <button type="button" class="btn btn-danger fa fa-trash-o" ng-click="deleteDevice(c);"></button>
-                        </div>
-                    </td>
-                </tr>
-            </table>
+            <h4>Devices I'm using</h4>
+            <filtered-device-list filtered-status="'inuse'" devices="devices" currentuser="currentuser"></filtered-device-list>
+            <!-- list all my locked devices -->
+            <h4>Devices I locked</h4>
+            <filtered-device-list filtered-status="'locked'" devices="devices" currentuser="currentuser"></filtered-device-list>
+            <!-- list all devices, except those locked or in use by me -->
+            <h4>All (other) devices</h4>
+            <filtered-device-list filtered-status="" devices="devices" currentuser="currentuser" filter-devices="filterdevices"></filtered-device-list>
         </div>
     </div>
 </div>

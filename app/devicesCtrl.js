@@ -1,6 +1,6 @@
 app.controller('devicesCtrl', function ($scope, $modal, $filter, Data) {
     /* todo: get the current user identifier : */
-    $scope.currentuserid = 6789;
+    $scope.currentuser = { id: 6789, profile: 'tester'};
 
     $scope.devices = {};
     /* todo: activate the 'data' factory :
@@ -21,14 +21,6 @@ app.controller('devicesCtrl', function ($scope, $modal, $filter, Data) {
     });
     */
 
-    $scope.statusFilter = function (status) {
-        return function (device) {
-            if (status === 'locked' || status == 'inuse')
-                return (device.devicestatus.user && device.devicestatus.user.id == $scope.currentuserid) && (device.devicestatus.status == status);
-            else
-                return (!device.devicestatus.user || device.devicestatus.user.id != $scope.currentuserid);
-        }
-    }
     
 
     $scope.changeDeviceStatus = function(device){
@@ -118,18 +110,7 @@ app.controller('devicesCtrl', function ($scope, $modal, $filter, Data) {
         });
     };
     
-    $scope.columns = [
-                        {text:"Case-ID",predicate:"boxid",sortable:true,dataType:"number"},
-                        {text:"Brand",predicate:"brand",sortable:true},
-                        {text:"Model",predicate:"model",sortable:true},
-                        {text:"OS",predicate:"os",sortable:true},
-                        {text:"OSVersion",predicate:"osversion",sortable:true},
-                        {text:"Screensize",predicate:"screensize",sortable:true},
-                        {text:"Type",predicate:"devicetype",sortable:true},
-                        {text:"Status",predicate:"status",sortable:true},
-                        {text:"Name",predicate:"name",sortable:true},
-                        {text:"Action",predicate:"",sortable:false}
-                    ];
+    
 
 });
 

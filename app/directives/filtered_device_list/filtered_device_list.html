@@ -1,0 +1,46 @@
+<table class="table table-striped">
+    <tr ng-show="devices.length==0">
+        <td style="vertical-align:middle;"><i class="fa fa-ban fa-3x"></i>&nbsp;No data found</td>
+    </tr>
+    <tr ng-hide="devices.length>-1">
+        <td style="vertical-align:middle;"><i class="fa fa-cog fa-3x fa-spin"></i>&nbsp;Loading</td>
+    </tr>
+    <!-- column headers -->
+    <tr>
+        <th ng-repeat="c in columns">{{c.text}}</th>
+    </tr>
+    <!-- (filtered) list with devices -->
+    <tr ng-repeat="c in devices | filter:statusFilter(filteredStatus) | filter:filterDevices | orderBy:'boxid'" id="{{c.boxid}}" animate-on-change='c.boxid + c.brand + c.model + c.os + c.osversion + c.screensize + c.devicetype + c.devicestatus.status + c.devicestatus.user.fullname' ng-animate=" 'animate'">
+        <td>{{c.boxid}}</td>
+        <td>{{c.brand}}</td>
+        <td>{{c.model}}</td>
+        <td>{{c.os}}</td>
+        <td>{{c.osversion}}</td>
+        <td>{{c.screensize}}</td>
+        <td>{{c.devicetype}}</td>
+        <td>
+            <button class="btn" ng-class="{available:'btn-success', inuse:'btn-danger', locked:'btn-info'}[c.devicestatus.status]" ng-click="changeDeviceStatus(c);">{{c.devicestatus.status}}</button>
+        </td>
+        <td>{{c.devicestatus.user.fullname}}</td>
+        <td style="width:100px">
+            <div class="btn-group">
+                <div ng-if="currentuser.profile!='administrator'">
+                    <!-- My Devices I'm USING could be RETURNed : -->
+                    <button type="button" class="btn btn-default" ng-if="filteredStatus=='inuse' && c.devicestatus.status=='inuse'">Return</button>
+                    <!-- My Devices I LOCKED could be UNLOCKed or CONFIRMed : -->
+                    <div class="btn-group" ng-if="filteredStatus=='locked' && c.devicestatus.status=='locked'">
+                        <button type="button" class="btn btn-default">Unlock</button>
+                        <button type="button" class="btn">Confirm</button>
+                    </div>
+                    <div ng-if="filteredStatus==null && c.devicestatus.status=='available'">
+                        <button type="button" class="btn btn-default">Lock</button>
+                    </div>
+                    <!-- As Administrator I can EDIT or DELETE a device : -->
+                    <div ng-if="currentuser.profile=='administrator'">
+                        <button type="button" class="btn btn-default fa fa-edit" ng-click="open(c);"></button>
+                        <button type="button" class="btn btn-danger fa fa-trash-o" ng-click="deleteDevice(c);"></button>
+                    </div>
+                </div>
+        </td>
+    </tr>
+</table>
