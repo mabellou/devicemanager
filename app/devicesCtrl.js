@@ -1,6 +1,6 @@
 app.controller('devicesCtrl', function ($scope, $modal, $filter, Data) {
     /* todo: get the current user identifier : */
-    $scope.currentuserid = 'u76823';
+    $scope.currentuserid = 6789;
 
     $scope.devices = {};
     /* todo: activate the 'data' factory :
@@ -8,10 +8,10 @@ app.controller('devicesCtrl', function ($scope, $modal, $filter, Data) {
         $scope.devices = data.data;
     });
     */
-    $scope.devices = [{ boxid : 100, brand : 'Apple', model : 'iPhone 6', os : 'iOS', osversion : '10.0.3', screensize : '5 inch', devicetype : 'smartphone', status : 'free', name : '' },
-                      { boxid : 200, brand : 'Google', model : 'Pixel', os : 'Android', osversion : '4.5', screensize : '7 inch', devicetype : 'tablet', status : 'locked', name : 'Marwan Bellouti', userid : 'X12345' },
-                      { boxid : 300, brand : 'Microsoft', model : 'Lumia 950', os : 'Windows Phone', osversion : '10', screensize : '5.5 inch', devicetype : 'smartphone', status : 'inuse', name : 'Marc Vermeir', userid : 'u76823' },
-                      { boxid : 400, brand : 'Microsoft', model : 'Lumia 640', os : 'Windows Phone', osversion : '8.1', screensize : '5.0 inch', devicetype : 'smartphone', status : 'locked', name : 'Marc Vermeir', userid : 'u76823' },
+    $scope.devices = [{ boxid : 100, brand : 'Apple', model : 'iPhone 6', os : 'iOS', osversion : '10.0.3', screensize : '5 inch', devicetype : 'smartphone', devicestatus : { status : 'available', user : null }},
+                      { boxid : 200, brand : 'Google', model : 'Pixel', os : 'Android', osversion : '4.5', screensize : '7 inch', devicetype : 'tablet', devicestatus : { status : 'locked', user : { fullname : 'Marwan Bellouti', id : 12345 }}},
+                      { boxid : 300, brand : 'Microsoft', model : 'Lumia 950', os : 'Windows Phone', osversion : '10', screensize : '5.5 inch', devicetype : 'smartphone', devicestatus : { status : 'inuse', user : { fullname : 'Marc Vermeir', id : 6789 }}},
+                      { boxid : 400, brand : 'Microsoft', model : 'Lumia 640', os : 'Windows Phone', osversion : '8.1', screensize : '5.0 inch', devicetype : 'smartphone', devicestatus : { status : 'locked', user : { fullname : 'Marc Vermeir', id : 6789 }}},
                     ];
 
     $scope.users = {};
@@ -24,19 +24,20 @@ app.controller('devicesCtrl', function ($scope, $modal, $filter, Data) {
     $scope.statusFilter = function (status) {
         return function (device) {
             if (status === 'locked' || status == 'inuse')
-                return (device.userid == $scope.currentuserid) && (device.status == status);
+                return (device.devicestatus.user && device.devicestatus.user.id == $scope.currentuserid) && (device.devicestatus.status == status);
             else
-                return (device.userid != $scope.currentuserid);
+                return (!device.devicestatus.user || device.devicestatus.user.id != $scope.currentuserid);
         }
     }
     
 
     $scope.changeDeviceStatus = function(device){
+        return;
+        /*
         if(device.status == "Unavailable"){
             device.status = "Available";
             device.name = "";
-            Data.put("devices/"+device.refid,{status:device.status, badgeid: ""});
-        }
+            Data.put("devices/"+device.refid,{status:device.status, badgeid: ""}); 
         else if(device.status == "Available"){
 
             var param = {};
@@ -69,6 +70,7 @@ app.controller('devicesCtrl', function ($scope, $modal, $filter, Data) {
                 device.name = selectedObject.name;
             });
         }
+        */
     };
     $scope.deleteDevice = function(device){
         if(confirm("Are you sure to remove the device")){
