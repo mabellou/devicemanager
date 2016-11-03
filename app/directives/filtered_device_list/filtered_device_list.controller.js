@@ -1,10 +1,10 @@
 app.controller('FilteredDeviceListController', function ($scope) {
     $scope.columns = [
-        {text:"Case-ID",predicate:"boxid",sortable:true,dataType:"number"},
+        {text:"Box Id",predicate:"boxid",sortable:true,dataType:"number"},
         {text:"Brand",predicate:"brand",sortable:true},
         {text:"Model",predicate:"model",sortable:true},
         {text:"OS",predicate:"os",sortable:true},
-        {text:"OSVersion",predicate:"osversion",sortable:true},
+        {text:"OS Version",predicate:"osversion",sortable:true},
         {text:"Screensize",predicate:"screensize",sortable:true},
         {text:"Type",predicate:"devicetype",sortable:true},
         {text:"Status",predicate:"status",sortable:true},

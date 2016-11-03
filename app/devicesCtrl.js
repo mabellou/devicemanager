@@ -1,6 +1,6 @@
 app.controller('devicesCtrl', function ($scope, $modal, $filter, Data) {
     /* todo: get the current user identifier : */
-    $scope.currentuser = { id: 6789, profile: 'tester'};
+    $scope.currentuser = { id: 6789, profile: 'tester', fullname : 'Marc Vermeir'};
 
     $scope.devices = {};
     /* todo: activate the 'data' factory :
@@ -12,16 +12,16 @@ app.controller('devicesCtrl', function ($scope, $modal, $filter, Data) {
                       { boxid : 200, brand : 'Google', model : 'Pixel', os : 'Android', osversion : '4.5', screensize : '7 inch', devicetype : 'tablet', devicestatus : { status : 'locked', user : { fullname : 'Marwan Bellouti', id : 12345 }}},
                       { boxid : 300, brand : 'Microsoft', model : 'Lumia 950', os : 'Windows Phone', osversion : '10', screensize : '5.5 inch', devicetype : 'smartphone', devicestatus : { status : 'inuse', user : { fullname : 'Marc Vermeir', id : 6789 }}},
                       { boxid : 400, brand : 'Microsoft', model : 'Lumia 640', os : 'Windows Phone', osversion : '8.1', screensize : '5.0 inch', devicetype : 'smartphone', devicestatus : { status : 'locked', user : { fullname : 'Marc Vermeir', id : 6789 }}},
+                      { boxid : 500, brand : 'Huawei', model : 'P9', os : 'Android', osversion : '5.x', screensize : '6 inch', devicetype : 'smartphone', devicestatus : { status : 'inuse', user : { fullname : 'Anthony Franssens', id : 98765 }}},
                     ];
 
+    /*
     $scope.users = {};
     /* todo: activate the 'data' factory :
     Data.get('users').then(function(data){
         $scope.users = data.data;
     });
     */
-
-    
 
     $scope.changeDeviceStatus = function(device){
         return;
@@ -90,7 +90,6 @@ app.controller('devicesCtrl', function ($scope, $modal, $filter, Data) {
                 p.os = selectedObject.os;
         });
     };
-
     $scope.create = function (p,size) {
         var modalInstance = $modal.open({
           templateUrl: 'partials/devicesEdit.html',
