@@ -1,12 +1,36 @@
 app.controller('devicesCtrl', function ($scope, $modal, $filter, Data) {
-    $scope.device = {};
+    /* todo: get the current user identifier : */
+    $scope.currentuserid = 'u76823';
+
+    $scope.devices = {};
+    /* todo: activate the 'data' factory :
     Data.get('userdevice').then(function(data){
         $scope.devices = data.data;
     });
+    */
+    $scope.devices = [{ boxid : 100, brand : 'Apple', model : 'iPhone 6', os : 'iOS', osversion : '10.0.3', screensize : '5 inch', devicetype : 'smartphone', status : 'free', name : '' },
+                      { boxid : 200, brand : 'Google', model : 'Pixel', os : 'Android', osversion : '4.5', screensize : '7 inch', devicetype : 'tablet', status : 'locked', name : 'Marwan Bellouti', userid : 'X12345' },
+                      { boxid : 300, brand : 'Microsoft', model : 'Lumia 950', os : 'Windows Phone', osversion : '10', screensize : '5.5 inch', devicetype : 'smartphone', status : 'inuse', name : 'Marc Vermeir', userid : 'u76823' },
+                      { boxid : 400, brand : 'Microsoft', model : 'Lumia 640', os : 'Windows Phone', osversion : '8.1', screensize : '5.0 inch', devicetype : 'smartphone', status : 'locked', name : 'Marc Vermeir', userid : 'u76823' },
+                    ];
+
     $scope.users = {};
+    /* todo: activate the 'data' factory :
     Data.get('users').then(function(data){
         $scope.users = data.data;
     });
+    */
+
+    $scope.statusFilter = function (status) {
+        return function (device) {
+            if (status === 'locked' || status == 'inuse')
+                return (device.userid == $scope.currentuserid) && (device.status == status);
+            else
+                return (device.userid != $scope.currentuserid);
+        }
+    }
+    
+
     $scope.changeDeviceStatus = function(device){
         if(device.status == "Unavailable"){
             device.status = "Available";
@@ -35,7 +59,8 @@ app.controller('devicesCtrl', function ($scope, $modal, $filter, Data) {
                 device.os = selectedObject.os;
                 device.badgeid = selectedObject.badgeid;
                 device.status = selectedObject.status;
-console.log($scope.users);
+                console.log($scope.users);
+
                 angular.forEach($scope.users, function(user) {
                     if (user.badgeid === selectedObject.badgeid) {
                     selectedObject.name=user.name;
@@ -91,16 +116,18 @@ console.log($scope.users);
         });
     };
     
- $scope.columns = [
-                    {text:"Refid",predicate:"refid",sortable:true,dataType:"number"},
-                    {text:"Case-ID",predicate:"caseid",sortable:true,dataType:"number"},
-                    {text:"Brand",predicate:"brand",sortable:true},
-                    {text:"Model",predicate:"model",sortable:true},
-                    {text:"OS",predicate:"os",sortable:true},
-                    {text:"Status",predicate:"status",sortable:true},
-                    {text:"Name",predicate:"name",sortable:true},
-                    {text:"Action",predicate:"",sortable:false}
-                ];
+    $scope.columns = [
+                        {text:"Case-ID",predicate:"boxid",sortable:true,dataType:"number"},
+                        {text:"Brand",predicate:"brand",sortable:true},
+                        {text:"Model",predicate:"model",sortable:true},
+                        {text:"OS",predicate:"os",sortable:true},
+                        {text:"OSVersion",predicate:"osversion",sortable:true},
+                        {text:"Screensize",predicate:"screensize",sortable:true},
+                        {text:"Type",predicate:"devicetype",sortable:true},
+                        {text:"Status",predicate:"status",sortable:true},
+                        {text:"Name",predicate:"name",sortable:true},
+                        {text:"Action",predicate:"",sortable:false}
+                    ];
 
 });
 

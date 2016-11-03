@@ -1,0 +1,5 @@
+Questions :
+
+- OK to receive flat objects like in devicesCtrl.js ? ++ the device user's identifier should be returned too .. userid ?!
+- 'List of devices' shows ALL devices, except the locked and inuse by the current user ?
+- How gets the browser the current user info back ?!

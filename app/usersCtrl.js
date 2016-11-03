@@ -1,8 +1,9 @@
 app.controller('usersCtrl', function ($scope, $modal, $filter, Data) {
-    $scope.user = {};
+    $scope.users = {};
     Data.get('users').then(function(data){
         $scope.users = data.data;
     });
+
     $scope.deleteUser = function(user){
         if(confirm("Are you sure to remove the user")){
             Data.delete("users/"+user.badgeid).then(function(result){
@@ -10,6 +11,7 @@ app.controller('usersCtrl', function ($scope, $modal, $filter, Data) {
             });
         }
     };
+
     $scope.open = function (p,size) {
         var modalInstance = $modal.open({
           templateUrl: 'partials/usersEdit.html',
@@ -47,15 +49,13 @@ app.controller('usersCtrl', function ($scope, $modal, $filter, Data) {
         });
     };
     
- $scope.columns = [
-                    {text:"Badgeid",predicate:"badgeid",sortable:true,dataType:"number"},
-                    {text:"Name",predicate:"name",sortable:true},
-                    {text:"Last time",predicate:"lastlogged",sortable:true},
-                    {text:"Action",predicate:"",sortable:false}
-                ];
+    $scope.columns = [ {text:"Badgeid",predicate:"badgeid",sortable:true,dataType:"number"},
+                       {text:"Name",predicate:"name",sortable:true},
+                       {text:"Last time",predicate:"lastlogged",sortable:true},
+                       {text:"Action",predicate:"",sortable:false}
+                     ];
 
 });
-
 
 app.controller('userEditCtrl', function ($scope, $modalInstance, item, Data) {
 
@@ -83,7 +83,6 @@ app.controller('userEditCtrl', function ($scope, $modalInstance, item, Data) {
                 });
         };
 });
-
 
 app.controller('userCreateCtrl', function ($scope, $modalInstance, item, Data) {
 
