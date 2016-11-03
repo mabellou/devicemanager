@@ -60,10 +60,17 @@ app.controller('usersCtrl', function ($scope, $modal, $filter, Data) {
         });
     };
     
+    $scope.getClass = function(date) {
+        return 'info';
+        /* todo: class value should be 'danger' if date (dd/mm/yyyy) < currentdate, otherwise return 'info'
+        return {'info': date - today <= 0, 'danger': (date - today > 0 && date - today <= 3)};
+        */
+    };
+
     $scope.columns = [ {text:"Badgeid",predicate:"badgeid",sortable:true,dataType:"number"},
                        {text:"Name",predicate:"fullname",sortable:true},
                        {text:"Profile",predicate:"profile",sortable:true},
-                       {text:"Enddate",predicate:"enddate",sortable:true},
+                       {text:"Active Until",predicate:"enddate",sortable:true},
                        {text:"#Devices Locked",predicate:"counterlocked",sortable:true},
                        {text:"#Devices InUse",predicate:"counterinuse",sortable:true},
                        {text:"Action",predicate:"",sortable:false}

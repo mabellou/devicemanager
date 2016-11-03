@@ -10,16 +10,19 @@
         <th ng-repeat="c in columns">{{c.text}}</th>
     </tr>
     <!-- (filtered) list with devices -->
-    <tr ng-repeat="c in devices | filter:statusFilter(filteredStatus) | filter:filterDevices | orderBy:'boxid'" id="{{c.boxid}}" animate-on-change='c.boxid + c.brand + c.model + c.os + c.osversion + c.screensize + c.devicetype + c.devicestatus.status + c.devicestatus.user.fullname' ng-animate=" 'animate'">
+    <tr ng-repeat="c in devices | filter:statusFilter(filteredStatus) | filter:filterDevices | orderBy:'boxid'" id="{{c.boxid}}" animate-on-change='c.boxid + c.brand + c.model + c.os + c.osversion + c.screensize + c.devicetype + c.devicestatus.status + c.devicestatus.user.fullname' ng-animate=" 'animate'" ng-class="getClass()">
         <td>{{c.boxid}}</td>
         <td>{{c.brand}}</td>
         <td>{{c.model}}</td>
         <td>{{c.os}}</td>
         <td>{{c.osversion}}</td>
         <td>{{c.screensize}}</td>
-        <td>{{c.devicetype}}</td>
         <td>
-            <button class="btn" ng-class="{available:'btn-success', inuse:'btn-danger', locked:'btn-info'}[c.devicestatus.status]" ng-click="changeDeviceStatus(c);">{{c.devicestatus.status}}</button>
+            <i class="fa fa-mobile fa-2x" aria-hidden="true" title="{{c.devicetype}}" ng-if="c.devicetype=='smartphone'"></i>
+            <i class="fa fa-tablet fa-2x" aria-hidden="true" title="{{c.devicetype}}" ng-if="c.devicetype=='tablet'"></i>
+        </td>
+        <td>
+            <button class="btn" ng-class="{available:'btn-success', inuse:'btn-danger', locked:'btn-info'}[c.devicestatus.status]" ng-click="changeDeviceStatus(c);">{{formatStatus(c.devicestatus.status)}}</button>
         </td>
         <td>{{c.devicestatus.user.fullname}}</td>
         <td style="width:100px">

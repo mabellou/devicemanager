@@ -24,7 +24,7 @@
                 <tr>
                     <th ng-repeat="c in columns">{{c.text}}</th>
                 </tr>
-                <tr ng-repeat="c in users | filter:filterUser | orderBy:'badgeid'" id="{{c.badgeid}}" animate-on-change='c.badgeid + c.fullname + c.profile + c.enddate + c.counterlocked + c.counterinuse' ng-animate=" 'animate'">
+                <tr ng-repeat="c in users | filter:filterUser | orderBy:'badgeid'" id="{{c.badgeid}}" animate-on-change='c.badgeid + c.fullname + c.profile + c.enddate + c.counterlocked + c.counterinuse' ng-animate=" 'animate'" ng-class="getClass(c.enddate)">
                     <td>{{c.badgeid}}</td>
                     <td>{{c.fullname}}</td>
                     <td>{{c.profile}}</td>

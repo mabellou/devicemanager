@@ -11,6 +11,7 @@ app.controller('FilteredDeviceListController', function ($scope) {
         {text:"Name",predicate:"name",sortable:true},
         {text:"Action",predicate:"",sortable:false}
     ];
+
     $scope.statusFilter = function (status) {
         return function (device) {
             if (status === 'locked' || status == 'inuse')
@@ -18,5 +19,14 @@ app.controller('FilteredDeviceListController', function ($scope) {
             else
                 return (!device.devicestatus.user || device.devicestatus.user.id != $scope.currentuser.id);
         }
+    };
+
+    $scope.getClass = function() {
+        return 'info';
+    };
+
+    $scope.formatStatus = function (status) {
+        console.log(status);
+        return status === 'inuse' ? 'in use' : status;
     }
 });
