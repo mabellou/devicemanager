@@ -15,7 +15,8 @@ app.controller('usersCtrl', function ($scope, $modal, $filter, Data) {
                     ];
 
 
-    $scope.deleteUser = function(user){
+    $scope.deleteUser = function(user) {
+        /* todo: delete user should be a logical delete where the enddate will be set equal to today */
         if(confirm("Are you sure to remove the user")){
             Data.delete("users/"+user.badgeid).then(function(result){
                 $scope.users = _.without($scope.users, _.findWhere($scope.users, {badgeid:user.badgeid}));
@@ -67,12 +68,12 @@ app.controller('usersCtrl', function ($scope, $modal, $filter, Data) {
         */
     };
 
-    $scope.columns = [ {text:"Badgeid",predicate:"badgeid",sortable:true,dataType:"number"},
+    $scope.columns = [ {text:"Badge ID",predicate:"badgeid",sortable:true,dataType:"number"},
                        {text:"Name",predicate:"fullname",sortable:true},
                        {text:"Profile",predicate:"profile",sortable:true},
                        {text:"Active Until",predicate:"enddate",sortable:true},
-                       {text:"#Devices Locked",predicate:"counterlocked",sortable:true},
-                       {text:"#Devices InUse",predicate:"counterinuse",sortable:true},
+                       {text:"#Devices Locked",predicate:"counterlocked",sortable:true,dataType:"number"},
+                       {text:"#Devices In Use",predicate:"counterinuse",sortable:true,dataType:"number"},
                        {text:"Action",predicate:"",sortable:false}
                      ];
 

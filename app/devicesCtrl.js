@@ -108,11 +108,7 @@ app.controller('devicesCtrl', function ($scope, $modal, $filter, Data) {
                 $scope.devices = $filter('orderBy')($scope.devices, 'caseid');
         });
     };
-    
-    
-
 });
-
 
 app.controller('deviceEditCtrl', function ($scope, $modalInstance, item, Data) {
 
@@ -171,7 +167,6 @@ app.controller('userLinkCtrl', function ($scope, $modalInstance, item, Data) {
                 });
         };
 });
-
 
 app.controller('deviceCreateCtrl', function ($scope, $modalInstance, item, Data) {
 

@@ -1,6 +1,6 @@
 app.controller('FilteredDeviceListController', function ($scope) {
     $scope.columns = [
-        {text:"Box Id",predicate:"boxid",sortable:true,dataType:"number"},
+        {text:"Box ID",predicate:"boxid",sortable:true,dataType:"number"},
         {text:"Brand",predicate:"brand",sortable:true},
         {text:"Model",predicate:"model",sortable:true},
         {text:"OS",predicate:"os",sortable:true},
@@ -14,8 +14,8 @@ app.controller('FilteredDeviceListController', function ($scope) {
 
     $scope.statusFilter = function (status) {
         return function (device) {
-            if (status === 'locked' || status == 'inuse')
-                return (device.devicestatus.user && device.devicestatus.user.id == $scope.currentuser.id) && (device.devicestatus.status == status);
+            if (status === 'locked' || status === 'inuse')
+                return (device.devicestatus.user && device.devicestatus.user.id == $scope.currentuser.id) && (device.devicestatus.status === status);
             else
                 return (!device.devicestatus.user || device.devicestatus.user.id != $scope.currentuser.id);
         }
@@ -26,7 +26,46 @@ app.controller('FilteredDeviceListController', function ($scope) {
     };
 
     $scope.formatStatus = function (status) {
-        console.log(status);
         return status === 'inuse' ? 'in use' : status;
-    }
+    };
+
+    $scope.returnDevice = function (device) {
+        // todo: call the BE service ..
+        if (device && device.devicestatus && device.devicestatus.status==='inuse') {
+            device.devicestatus = { status : 'available', user : null };
+        }
+        /*
+        else error ..
+        */
+    };
+
+    $scope.unlockDevice = function (device) {
+         // todo: call the BE service ..
+        if (device && device.devicestatus && device.devicestatus.status==='locked') {
+            device.devicestatus = { status : 'available', user : null };
+        }
+        /*
+        else error ..
+        */
+    };
+
+    $scope.confirmDevice = function (device) {
+        // todo: call the BE service ..
+        if (device && device.devicestatus && device.devicestatus.status==='locked') {
+            device.devicestatus = { status : 'inuse', user : { fullname : 'Marc Vermeir', id : 6789 }};
+        }
+        /*
+        else error ..
+        */
+    };
+
+    $scope.lockDevice = function (device) {
+        // todo: call the BE service ..
+        if (device && device.devicestatus && device.devicestatus.status==='available') {
+            device.devicestatus = { status : 'locked', user : { fullname : 'Marc Vermeir', id : 6789 }};
+        }
+        /*
+        else error ..
+        */
+    };
 });
