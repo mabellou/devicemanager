@@ -1,4 +1,6 @@
+<!--
 <h4 class="blog-post-title">Devices</h4>
+-->
 <hr/>
 <button type="button" class="btn btn-danger fa fa-plus" ng-click="create(device);" ng-if="currentuser.profile=='administrator'">&nbsp;Add New Device</button>
 <div class="table-responsive">
@@ -6,8 +8,9 @@
         <div class="panel-heading">List of devices
             <div class="sw-search">
                 <div class="nav-search" id="nav-search">
-                    Filter: <span class="input-icon">
-                        <input placeholder="Filter devices list ..." class="nav-search-input" ng-model="filterdevices" ng-change="resetLimit();"  autocomplete="off" type="text" style="width:300px;" focus>
+                    Filter: 
+                    <span class="input-icon">
+                        <input placeholder="Filter devices list ..." class="nav-search-input" ng-model="filterdevices" ng-change="resetLimit();" autocomplete="off" type="text" style="width:300px;" focus>
                         <i class="search-icon fa fa-search nav-search-icon"></i>
                     </span>
                 </div>

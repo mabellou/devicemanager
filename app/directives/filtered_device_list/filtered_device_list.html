@@ -1,16 +1,102 @@
-<table class="table table-striped">
+<table class="table table-striped" width="100%">
+    <col style="width:5%">
+    <col style="width:125px">
+    <col style="width:130px">
+    <col style="width:130px">
+    <col style="width:130px">
+    <col style="width:130px">
+    <col style="width:130px">
+    <col style="width:5%">
+    <col style="width:10%">
+    <col style="width:5%"">
+
     <tr ng-show="devices.length===0">
         <td style="vertical-align:middle;"><i class="fa fa-ban fa-3x"></i>&nbsp;No data found</td>
     </tr>
     <tr ng-hide="devices.length>-1">
         <td style="vertical-align:middle;"><i class="fa fa-cog fa-3x fa-spin"></i>&nbsp;Loading</td>
     </tr>
-    <!-- column headers -->
+    <!-- column headers : -->
     <tr>
         <th ng-repeat="c in columns">{{c.text}}</th>
     </tr>
+    <!-- filtering 4 some columns : -->
+    <tr ng-if="!filteredStatus">
+        <th></th>
+        <th>
+            <!-- filter on Brand ? -->
+            <div class="sw-filter">
+                <div class="nav-search" id="nav-search">
+                    <span class="input-icon">
+                        <input placeholder="Brand" class="nav-search-input" ng-model="filters['brand']" ng-change="resetLimit();" autocomplete="off" type="text" focus>
+                        <i class="search-icon fa fa-search nav-search-icon"></i>
+                    </span>
+                </div>
+            </div>
+        </th>
+        <th>
+            <!-- filter on Model ? -->
+            <div class="sw-filter">
+                <div class="nav-search" id="nav-search">
+                    <span class="input-icon">
+                        <input placeholder="Model" class="nav-search-input" ng-model="filters['model']" ng-change="resetLimit();" autocomplete="off" type="text" focus>
+                        <i class="search-icon fa fa-search nav-search-icon"></i>
+                    </span>
+                </div>
+            </div>
+        </th>
+        <th>
+            <!-- filter on OS ? -->
+            <div class="sw-filter">
+                <div class="nav-search" id="nav-search">
+                    <span class="input-icon">
+                        <input placeholder="OS" class="nav-search-input-sm" ng-model="filters['os']" ng-change="resetLimit();" autocomplete="off" type="text" focus>
+                        <i class="search-icon fa fa-search nav-search-icon"></i>
+                    </span>
+                </div>
+            </div>
+        </th>
+        <th>
+            <!-- filter on OS Version ? -->
+            <div class="sw-filter">
+                <div class="nav-search" id="nav-search">
+                    <span class="input-icon">
+                        <input placeholder="OS Version" class="nav-search-input-sm" ng-model="filters['osversion']" ng-change="resetLimit();" autocomplete="off" type="text" focus>
+                        <i class="search-icon fa fa-search nav-search-icon"></i>
+                    </span>
+                </div>
+            </div>
+        </th>
+        <th>
+            <!-- filter on Screensize ? -->
+            <div class="sw-filter">
+                <div class="nav-search" id="nav-search">
+                    <span class="input-icon">
+                        <input placeholder="Screensize" class="nav-search-input-sm" ng-model="filters['screensize']" ng-change="resetLimit();" autocomplete="off" type="text" focus>
+                        <i class="search-icon fa fa-search nav-search-icon"></i>
+                    </span>
+                </div>
+            </div>
+        </th>
+        <th>
+            <!-- filter on DeviceType ? -->
+            <div class="sw-filter">
+                <div class="nav-search" id="nav-search">
+                    <span class="input-icon">
+                        <input placeholder="Type" class="nav-search-input-sm" ng-model="filters['devicetype']" ng-change="resetLimit();" autocomplete="off" type="text" focus>
+                        <i class="search-icon fa fa-search nav-search-icon"></i>
+                    </span>
+                </div>
+            </div>
+        </th>
+        <th></th>
+        <th></th>
+        <th>
+             <button type="button" class="btn btn-default btn-sm" ng-click="clearFilters()">Clear</button>
+        </th>   
+    </tr>
     <!-- (filtered) list with devices -->
-    <tr ng-repeat="c in devices | filter:statusFilter(filteredStatus) | filter:filterDevices | orderBy:'boxid'" id="{{c.boxid}}" animate-on-change='c.boxid + c.brand + c.model + c.os + c.osversion + c.screensize + c.devicetype + c.devicestatus.status + c.devicestatus.user.fullname' ng-animate=" 'animate'" ng-class="getClass()">
+    <tr ng-repeat="c in devices | filter:filterOnStatus(filteredStatus) | filter:filters | filter:filterDevices | orderBy:'boxid'" id="{{c.boxid}}" animate-on-change='c.boxid + c.brand + c.model + c.os + c.osversion + c.screensize + c.devicetype + c.devicestatus.status + c.devicestatus.user.fullname' ng-animate=" 'animate'" ng-class="getClass()">
         <td>{{c.boxid}}</td>
         <td>{{c.brand}}</td>
         <td>{{c.model}}</td>
@@ -28,21 +114,21 @@
             <button class="btn" ng-class="{available:'btn-success', inuse:'btn-danger', locked:'btn-info'}[c.devicestatus.status]">{{formatStatus(c.devicestatus.status)}}</button>
         </td>
         <td>{{c.devicestatus.user.fullname}}</td>
-        <td style="width:100px">
-            <div class="btn-group">
+        <td style="width:200px">
+            <div>
                 <div ng-if="currentuser.profile!='administrator'">
                     <!-- My Devices I'm USING could be RETURNed : -->
-                    <button type="button" class="btn btn-default" ng-if="filteredStatus==='inuse' && c.devicestatus.status==='inuse'" ng-click="returnDevice(c);">Return</button>
+                    <button type="button" class="btn btn-default btn-sm" ng-if="filteredStatus==='inuse' && c.devicestatus.status==='inuse'" ng-click="returnDevice(c);">Return</button>
                     <!-- My Devices I LOCKED could be UNLOCKed or CONFIRMed : -->
                     <div class="btn-group" ng-if="filteredStatus==='locked' && c.devicestatus.status==='locked'">
-                        <button type="button" class="btn btn-default" ng-click="unlockDevice(c);">Unlock</button>
-                        <button type="button" class="btn" ng-click="confirmDevice(c);">Confirm</button>
+                        <button type="button" class="btn btn-primary btn-sm" ng-click="unlockDevice(c);">Unlock</button>
+                        <button type="button" class="btn btn-default btn-sm" ng-click="confirmDevice(c);">Confirm</button>
                     </div>
-                    <div ng-if="filteredStatus==null && c.devicestatus.status==='available'">
-                        <button type="button" class="btn btn-default" ng-click="lockDevice(c);">Lock</button>
+                    <div ng-if="filteredStatus===null && c.devicestatus.status==='available'">
+                        <button type="button" class="btn btn-default btn-sm" ng-click="lockDevice(c);">Lock</button>
                     </div>
                     <!-- As Administrator I can EDIT or DELETE a device : -->
-                    <div ng-if="currentuser.profile==='administrator'">
+                    <div class="btn-group" ng-if="currentuser.profile==='administrator'">
                         <button type="button" class="btn btn-default fa fa-edit" ng-click="open(c);"></button>
                         <button type="button" class="btn btn-danger fa fa-trash-o" ng-click="deleteDevice(c);"></button>
                     </div>

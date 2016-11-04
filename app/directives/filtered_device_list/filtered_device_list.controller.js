@@ -11,13 +11,15 @@ app.controller('FilteredDeviceListController', function ($scope) {
         {text:"Name",predicate:"name",sortable:true},
         {text:"Action",predicate:"",sortable:false}
     ];
+    
+    $scope.filters = {};
 
-    $scope.statusFilter = function (status) {
+    $scope.filterOnStatus = function (status) {
         return function (device) {
             if (status === 'locked' || status === 'inuse')
-                return (device.devicestatus.user && device.devicestatus.user.id == $scope.currentuser.id) && (device.devicestatus.status === status);
+                return (device.devicestatus.user && device.devicestatus.user.id === $scope.currentuser.id) && (device.devicestatus.status === status);
             else
-                return (!device.devicestatus.user || device.devicestatus.user.id != $scope.currentuser.id);
+                return (!device.devicestatus.user || device.devicestatus.user.id !== $scope.currentuser.id);
         }
     };
 

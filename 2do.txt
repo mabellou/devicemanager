@@ -1,5 +1,12 @@
-Questions :
+** Questions :
+
+° Use some kind of constants 4 devicetype, device-status ??
+
 
 
 ° How gets the browser the current user info back ?!
 ° Quid a BUILD app approach based on Grunt/Gulp or Webpack ?!
+
+** 2 CHECK:
+
+-- http://softwareninjaneer.com/blog/creating-an-angularjs-reset-field-directive/
