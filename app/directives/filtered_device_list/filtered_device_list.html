@@ -1,4 +1,5 @@
 <table class="table table-striped" width="100%">
+    <!--
     <col style="width:5%">
     <col style="width:125px">
     <col style="width:130px">
@@ -9,9 +10,23 @@
     <col style="width:5%">
     <col style="width:10%">
     <col style="width:5%"">
+    -->
+    
+    <col style="width:5%">
+    <col style="width:10%">
+    <col style="width:10%">
+    <col style="width:10%">
 
-    <tr ng-show="devices.length===0">
-        <td style="vertical-align:middle;"><i class="fa fa-ban fa-3x"></i>&nbsp;No data found</td>
+    <col style="width:5%">
+    <col style="width:5%">
+    <col style="width:5%">
+
+    <col style="width:5%">
+    <col style="width:20%">
+    <col style="width:20%">
+    
+    <tr ng-show="devices.length==0">
+        <td style="vertical-align:middle; "><i class="fa fa-ban fa-3x "></i>&nbsp;No data found</td>
     </tr>
     <tr ng-hide="devices.length>-1">
         <td style="vertical-align:middle;"><i class="fa fa-cog fa-3x fa-spin"></i>&nbsp;Loading</td>
@@ -21,7 +36,7 @@
         <th ng-repeat="c in columns">{{c.text}}</th>
     </tr>
     <!-- filtering 4 some columns : -->
-    <tr ng-if="!filteredStatus">
+    <tr ng-show="!filteredStatus">
         <th></th>
         <th>
             <!-- filter on Brand ? -->
@@ -92,11 +107,11 @@
         <th></th>
         <th></th>
         <th>
-             <button type="button" class="btn btn-default btn-sm" ng-click="clearFilters()">Clear</button>
-        </th>   
+            <button type="button" class="btn btn-default btn-sm" ng-click="clearFilters()">Clear</button>
+        </th>
     </tr>
     <!-- (filtered) list with devices -->
-    <tr ng-repeat="c in devices | filter:filterOnStatus(filteredStatus) | filter:filters | filter:filterDevices | orderBy:'boxid'" id="{{c.boxid}}" animate-on-change='c.boxid + c.brand + c.model + c.os + c.osversion + c.screensize + c.type + c.statusobject.status + c.statusobject.userobject.fullname' ng-animate=" 'animate'" ng-class="getClass()">
+    <tr ng-repeat="c in devices | filter:filterOnStatus(filteredStatus) | filter:filters | filter:filterDevices | orderBy:'boxid'" id="{{c.boxid}}" animate-on-change='c.boxid + c.brand + c.model + c.os + c.osversion + c.screensize + c.type + c.statusobject.status' ng-animate="'animate'" ng-class="getClass()">
         <td>{{c.boxid}}</td>
         <td>{{c.brand}}</td>
         <td>{{c.model}}</td>
@@ -104,32 +119,31 @@
         <td>{{c.osversion}}</td>
         <td>{{c.screensize}}</td>
         <td>
-            <i class="fa fa-mobile fa-2x" aria-hidden="true" title="{{c.type}}" ng-if="c.type==='smartphone'"></i>
-            <i class="fa fa-tablet fa-2x" aria-hidden="true" title="{{c.type}}" ng-if="c.type==='tablet'"></i>
+            <i class="fa fa-mobile fa-2x" aria-hidden="true" title="{{c.type}}" ng-if="c.type=='smartphone'"></i>
+            <i class="fa fa-tablet fa-2x" aria-hidden="true" title="{{c.type}}" ng-if="c.type=='tablet'"></i>
         </td>
         <td>
             <button class="btn btn-devicestatus" ng-class="{available:'btn-success', inuse:'btn-danger', locked:'btn-info'}[c.statusobject.status]">{{formatStatus(c.statusobject.status)}}</button>
         </td>
         <td>{{c.statusobject.userobject.fullname}}</td>
         <td style="width:200px">
-            <div>
-                <div ng-if="currentuser.profile!=='administrator'">
-                    <!-- My Devices I'm USING could be RETURNed : -->
-                    <button type="button" class="btn btn-default btn-sm" ng-if="filteredStatus==='inuse' && c.statusobject.status==='inuse'" ng-click="returnDevice(c);">Return</button>
-                    <!-- My Devices I LOCKED could be UNLOCKed or CONFIRMed : -->
-                    <div class="btn-group" ng-if="filteredStatus==='locked' && c.statusobject.status==='locked'">
-                        <button type="button" class="btn btn-primary btn-sm" ng-click="unlockDevice(c);">Unlock</button>
-                        <button type="button" class="btn btn-default btn-sm" ng-click="confirmDevice(c);">Confirm</button>
-                    </div>
-                    <div ng-if="filteredStatus===null && c.statusobject.status==='available'">
-                        <button type="button" class="btn btn-default btn-sm" ng-click="lockDevice(c);">Lock</button>
-                    </div>
-                    <!-- As Administrator I can EDIT or DELETE a device : -->
-                    <div class="btn-group" ng-if="currentuser.profile==='administrator'">
-                        <button type="button" class="btn btn-default fa fa-edit" ng-click="open(c);"></button>
-                        <button type="button" class="btn btn-danger fa fa-trash-o" ng-click="deleteDevice(c);"></button>
-                    </div>
+            <div ng-if="currentuser.profile!='administrator'">
+                <!-- My Devices I'm USING could be RETURNed : -->
+                <button type="button" class="btn btn-primary btn-sm" ng-show="filteredStatus=='inuse' && c.statusobject.status=='inuse'" ng-click="returnDevice(c);">Return</button>
+                <!-- My Devices I LOCKED could be UNLOCKed or CONFIRMed : -->
+                <div class="btn-group" ng-show="filteredStatus=='locked' && c.statusobject.status=='locked'">
+                    <button type="button" class="btn btn-default btn-sm" ng-click="unlockDevice(c);">Unlock</button>
+                    <button type="button" class="btn btn-primary btn-sm" ng-click="confirmDevice(c);">Confirm</button>
                 </div>
+                <div ng-show="filteredStatus==null && c.statusobject.status=='available'">
+                    <button type="button" class="btn btn-primary btn-sm" ng-click="lockDevice(c);">Lock</button>
+                </div>
+                <!-- As Administrator I can EDIT or DELETE a device : -->
+                <div class="btn-group" ng-show="currentuser.profile=='administrator'">
+                    <button type="button" class="btn btn-default fa fa-edit" ng-click="open(c);"></button>
+                    <button type="button" class="btn btn-danger fa fa-trash-o" ng-click="deleteDevice(c);"></button>
+                </div>
+            </div>
         </td>
     </tr>
 </table>

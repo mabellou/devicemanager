@@ -8,7 +8,7 @@ app.controller('FilteredDeviceListController', function ($scope) {
         {text:"Screensize",predicate:"screensize",sortable:true},
         {text:"Type",predicate:"type",sortable:true},
         {text:"Status",predicate:"status",sortable:true},
-        {text:"Name",predicate:"name",sortable:true},
+        {text:"Name",predicate:"fullname",sortable:true},
         {text:"Action",predicate:"",sortable:false}
     ];
     
@@ -39,7 +39,7 @@ app.controller('FilteredDeviceListController', function ($scope) {
         // todo: call the BE service ..
         if (device && device.statusobject && device.statusobject.status==='inuse') {
             device.statusobject = { status : 'available', userobject : null };
-        }
+        };
         /*
         else error ..
         */
@@ -49,7 +49,7 @@ app.controller('FilteredDeviceListController', function ($scope) {
          // todo: call the BE service ..
         if (device && device.statusobject && device.statusobject.status==='locked') {
             device.statusobject = { status : 'available', userobject : null };
-        }
+        };
         /*
         else error ..
         */
@@ -59,7 +59,7 @@ app.controller('FilteredDeviceListController', function ($scope) {
         // todo: call the BE service ..
         if (device && device.statusobject && device.statusobject.status==='locked') {
             device.statusobject = { status : 'inuse', userobject : { fullname : 'Marc Vermeir', userid : 6789 }};
-        }
+        };
         /*
         else error ..
         */
@@ -69,7 +69,7 @@ app.controller('FilteredDeviceListController', function ($scope) {
         // todo: call the BE service ..
         if (device && device.statusobject && device.statusobject.status==='available') {
             device.statusobject = { status : 'locked', userobject : { fullname : 'Marc Vermeir', userid : 6789 }};
-        }
+        };
         /*
         else error ..
         */

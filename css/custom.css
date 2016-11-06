@@ -94,7 +94,7 @@ transition: width ease .15s;
 }
 .nav-search .nav-search-input-sm {
 border: 1px solid #6fb3e0;
-width: 125px;
+width: 100px;
 height: 28px !important;
 padding-top: 2px;
 padding-bottom: 2px;

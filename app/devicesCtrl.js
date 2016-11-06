@@ -1,6 +1,6 @@
 app.controller('devicesCtrl', function ($scope, $modal, $filter, Data) {
     /* todo: get the current user identifier : */
-    $scope.currentuser = { userid: 6789, profile: 'tester', fullname : 'Marc Vermeir'};
+    $scope.currentuser = { userid : 6789, profile : 'tester', fullname : 'Marc Vermeir'};
 
     $scope.devices = {};
     
