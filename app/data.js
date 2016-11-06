@@ -1,7 +1,7 @@
 app.factory("Data", ['$http', '$location',
     function ($http, $q, $location) {
 
-        var serviceBase = 'api/v1/';
+        var serviceBase = 'https://devicerestnodejsv1.herokuapp.com/api/v1/';
 
         var obj = {};
 

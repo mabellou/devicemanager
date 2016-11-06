@@ -3,17 +3,17 @@ app.controller('usersCtrl', function ($scope, $modal, $filter, Data) {
     $scope.currentuser = { id : 98765, profile : 'administrator', fullname : 'Anthony Franssens'};
 
     $scope.users = {};
-    /* todo: activate the 'data' factory :
+
     Data.get('users').then(function(data){
-        $scope.users = data.data;
+        $scope.users = data;
     });
-    */
-    /* todo: update the list of users with the other missing fields as : IMEI, SerialNbr, Password (?), ... */
+
+    /* 
     $scope.users = [{ id : 98765, badgeid : '1011001', fullname : 'Anthony Franssens', firstname : 'Anthony', lastname : 'Franssens', profile : 'administrator', startdate : '01/09/2016', enddate : null, counterlocked : 0, counterinuse : 1 },
                     { id : 6789, badgeid : '1011110', fullname : 'Marc Vermeir', firstname : 'Marc', lastname : 'Vermeir', profile : 'tester', startdate : '01/09/2016', enddate : null, counterlocked : 1, counterinuse : 1 },
                     { id : 12345, badgeid : '1011111', fullname : 'Marwan Bellouti', firstname : 'Marwan', lastname : 'Bellouti', profile : 'tester', startdate : '01/09/2016', enddate : null, counterlocked : 1, counterinuse : 0 },
                     ];
-
+    */
 
     $scope.deleteUser = function(user) {
         /* todo: delete user should be a logical delete where the enddate will be set equal to today */

@@ -111,7 +111,7 @@
             <!--
             <button class="btn" ng-class="{available:'btn-success', inuse:'btn-danger', locked:'btn-info'}[c.devicestatus.status]" ng-click="changeDeviceStatus(c);">{{formatStatus(c.devicestatus.status)}}</button>
             -->
-            <button class="btn" ng-class="{available:'btn-success', inuse:'btn-danger', locked:'btn-info'}[c.devicestatus.status]">{{formatStatus(c.devicestatus.status)}}</button>
+            <button class="btn btn-devicestatus" ng-class="{available:'btn-success', inuse:'btn-danger', locked:'btn-info'}[c.devicestatus.status]">{{formatStatus(c.devicestatus.status)}}</button>
         </td>
         <td>{{c.devicestatus.user.fullname}}</td>
         <td style="width:200px">

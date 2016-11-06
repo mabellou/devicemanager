@@ -31,6 +31,18 @@ app.controller('FilteredDeviceListController', function ($scope) {
         return status === 'inuse' ? 'in use' : status;
     };
 
+    $scope.clearFilters = function () {
+        $scope.filters = {};
+        /*
+        for(key in $scope.filters) {
+            var value = $scope.filters[key];
+            console.log(value);
+
+            $scope.filters[key] = null;
+        }
+        */
+    };
+
     $scope.returnDevice = function (device) {
         // todo: call the BE service ..
         if (device && device.devicestatus && device.devicestatus.status==='inuse') {
