@@ -79,11 +79,11 @@
             </div>
         </th>
         <th>
-            <!-- filter on DeviceType ? -->
+            <!-- filter on (device) Type ? -->
             <div class="sw-filter">
                 <div class="nav-search" id="nav-search">
                     <span class="input-icon">
-                        <input placeholder="Type" class="nav-search-input-sm" ng-model="filters['devicetype']" ng-change="resetLimit();" autocomplete="off" type="text" focus>
+                        <input placeholder="Type" class="nav-search-input-sm" ng-model="filters['type']" ng-change="resetLimit();" autocomplete="off" type="text" focus>
                         <i class="search-icon fa fa-search nav-search-icon"></i>
                     </span>
                 </div>
@@ -96,7 +96,7 @@
         </th>   
     </tr>
     <!-- (filtered) list with devices -->
-    <tr ng-repeat="c in devices | filter:filterOnStatus(filteredStatus) | filter:filters | filter:filterDevices | orderBy:'boxid'" id="{{c.boxid}}" animate-on-change='c.boxid + c.brand + c.model + c.os + c.osversion + c.screensize + c.devicetype + c.devicestatus.status + c.devicestatus.user.fullname' ng-animate=" 'animate'" ng-class="getClass()">
+    <tr ng-repeat="c in devices | filter:filterOnStatus(filteredStatus) | filter:filters | filter:filterDevices | orderBy:'boxid'" id="{{c.boxid}}" animate-on-change='c.boxid + c.brand + c.model + c.os + c.osversion + c.screensize + c.type + c.statusobject.status + c.statusobject.userobject.fullname' ng-animate=" 'animate'" ng-class="getClass()">
         <td>{{c.boxid}}</td>
         <td>{{c.brand}}</td>
         <td>{{c.model}}</td>
@@ -104,27 +104,24 @@
         <td>{{c.osversion}}</td>
         <td>{{c.screensize}}</td>
         <td>
-            <i class="fa fa-mobile fa-2x" aria-hidden="true" title="{{c.devicetype}}" ng-if="c.devicetype==='smartphone'"></i>
-            <i class="fa fa-tablet fa-2x" aria-hidden="true" title="{{c.devicetype}}" ng-if="c.devicetype==='tablet'"></i>
+            <i class="fa fa-mobile fa-2x" aria-hidden="true" title="{{c.type}}" ng-if="c.type==='smartphone'"></i>
+            <i class="fa fa-tablet fa-2x" aria-hidden="true" title="{{c.type}}" ng-if="c.type==='tablet'"></i>
         </td>
         <td>
-            <!--
-            <button class="btn" ng-class="{available:'btn-success', inuse:'btn-danger', locked:'btn-info'}[c.devicestatus.status]" ng-click="changeDeviceStatus(c);">{{formatStatus(c.devicestatus.status)}}</button>
-            -->
-            <button class="btn btn-devicestatus" ng-class="{available:'btn-success', inuse:'btn-danger', locked:'btn-info'}[c.devicestatus.status]">{{formatStatus(c.devicestatus.status)}}</button>
+            <button class="btn btn-devicestatus" ng-class="{available:'btn-success', inuse:'btn-danger', locked:'btn-info'}[c.statusobject.status]">{{formatStatus(c.statusobject.status)}}</button>
         </td>
-        <td>{{c.devicestatus.user.fullname}}</td>
+        <td>{{c.statusobject.userobject.fullname}}</td>
         <td style="width:200px">
             <div>
-                <div ng-if="currentuser.profile!='administrator'">
+                <div ng-if="currentuser.profile!=='administrator'">
                     <!-- My Devices I'm USING could be RETURNed : -->
-                    <button type="button" class="btn btn-default btn-sm" ng-if="filteredStatus==='inuse' && c.devicestatus.status==='inuse'" ng-click="returnDevice(c);">Return</button>
+                    <button type="button" class="btn btn-default btn-sm" ng-if="filteredStatus==='inuse' && c.statusobject.status==='inuse'" ng-click="returnDevice(c);">Return</button>
                     <!-- My Devices I LOCKED could be UNLOCKed or CONFIRMed : -->
-                    <div class="btn-group" ng-if="filteredStatus==='locked' && c.devicestatus.status==='locked'">
+                    <div class="btn-group" ng-if="filteredStatus==='locked' && c.statusobject.status==='locked'">
                         <button type="button" class="btn btn-primary btn-sm" ng-click="unlockDevice(c);">Unlock</button>
                         <button type="button" class="btn btn-default btn-sm" ng-click="confirmDevice(c);">Confirm</button>
                     </div>
-                    <div ng-if="filteredStatus===null && c.devicestatus.status==='available'">
+                    <div ng-if="filteredStatus===null && c.statusobject.status==='available'">
                         <button type="button" class="btn btn-default btn-sm" ng-click="lockDevice(c);">Lock</button>
                     </div>
                     <!-- As Administrator I can EDIT or DELETE a device : -->

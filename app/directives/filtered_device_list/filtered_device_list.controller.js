@@ -6,7 +6,7 @@ app.controller('FilteredDeviceListController', function ($scope) {
         {text:"OS",predicate:"os",sortable:true},
         {text:"OS Version",predicate:"osversion",sortable:true},
         {text:"Screensize",predicate:"screensize",sortable:true},
-        {text:"Type",predicate:"devicetype",sortable:true},
+        {text:"Type",predicate:"type",sortable:true},
         {text:"Status",predicate:"status",sortable:true},
         {text:"Name",predicate:"name",sortable:true},
         {text:"Action",predicate:"",sortable:false}
@@ -17,9 +17,9 @@ app.controller('FilteredDeviceListController', function ($scope) {
     $scope.filterOnStatus = function (status) {
         return function (device) {
             if (status === 'locked' || status === 'inuse')
-                return (device.devicestatus.user && device.devicestatus.user.id === $scope.currentuser.id) && (device.devicestatus.status === status);
+                return (device.statusobject.userobject && device.statusobject.userobject.userid === $scope.currentuser.userid) && (device.statusobject.status === status);
             else
-                return (!device.devicestatus.user || device.devicestatus.user.id !== $scope.currentuser.id);
+                return (!device.statusobject.userobject || device.statusobject.userobject.userid !== $scope.currentuser.userid);
         }
     };
 
@@ -33,20 +33,12 @@ app.controller('FilteredDeviceListController', function ($scope) {
 
     $scope.clearFilters = function () {
         $scope.filters = {};
-        /*
-        for(key in $scope.filters) {
-            var value = $scope.filters[key];
-            console.log(value);
-
-            $scope.filters[key] = null;
-        }
-        */
     };
 
     $scope.returnDevice = function (device) {
         // todo: call the BE service ..
-        if (device && device.devicestatus && device.devicestatus.status==='inuse') {
-            device.devicestatus = { status : 'available', user : null };
+        if (device && device.statusobject && device.statusobject.status==='inuse') {
+            device.statusobject = { status : 'available', userobject : null };
         }
         /*
         else error ..
@@ -55,8 +47,8 @@ app.controller('FilteredDeviceListController', function ($scope) {
 
     $scope.unlockDevice = function (device) {
          // todo: call the BE service ..
-        if (device && device.devicestatus && device.devicestatus.status==='locked') {
-            device.devicestatus = { status : 'available', user : null };
+        if (device && device.statusobject && device.statusobject.status==='locked') {
+            device.statusobject = { status : 'available', userobject : null };
         }
         /*
         else error ..
@@ -65,8 +57,8 @@ app.controller('FilteredDeviceListController', function ($scope) {
 
     $scope.confirmDevice = function (device) {
         // todo: call the BE service ..
-        if (device && device.devicestatus && device.devicestatus.status==='locked') {
-            device.devicestatus = { status : 'inuse', user : { fullname : 'Marc Vermeir', id : 6789 }};
+        if (device && device.statusobject && device.statusobject.status==='locked') {
+            device.statusobject = { status : 'inuse', userobject : { fullname : 'Marc Vermeir', userid : 6789 }};
         }
         /*
         else error ..
@@ -75,8 +67,8 @@ app.controller('FilteredDeviceListController', function ($scope) {
 
     $scope.lockDevice = function (device) {
         // todo: call the BE service ..
-        if (device && device.devicestatus && device.devicestatus.status==='available') {
-            device.devicestatus = { status : 'locked', user : { fullname : 'Marc Vermeir', id : 6789 }};
+        if (device && device.statusobject && device.statusobject.status==='available') {
+            device.statusobject = { status : 'locked', userobject : { fullname : 'Marc Vermeir', userid : 6789 }};
         }
         /*
         else error ..
