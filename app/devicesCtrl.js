@@ -1,11 +1,46 @@
 app.controller('devicesCtrl', function ($scope, $modal, $filter, Data) {
-    /* todo: get the current user identifier : */
-    $scope.currentuser = { userid : 6789, profile : 'tester', fullname : 'Marc Vermeir'};
+    
+    /* todo: get username & password from authentication form .. */
+    var credentials = { username : 'marcvermeir', password : 'azerty' };
 
+    /* authenticate the 'current user' .. */ 
+    if (!sessionStorage.userToken) {
+        Data.post('authenticate', credentials).then(function(data) {
+            sessionStorage.userToken = data.token;
+            sessionStorage.userId = data.userid;
+
+            /* quid the error(s) ?! .. todo: handle error(s) ?! */
+        });
+    }
+
+    /* get the user info of the 'current user' .. */
+    $scope.currentuser = {};
+    if (sessionStorage.userId) {
+        /* call the (VT) Service to fetch the 'current user' info .. */
+        
+        Data.get('user/' + sessionStorage.userId + '?token=' + sessionStorage.userToken).then(function(data) {
+            
+            /* capture the user data into a $scope.currentuser object .. */
+            $scope.currentuser = { userid : data.id, fullname : data.fullname, profile : data.profile };
+
+            /*
+                quid the error(s) ?! .. todo: handle error(s) ?!
+            */
+        });
+    }
+
+    /* INITIAL ..
+    $scope.currentuser = { userid : 11, profile : 'tester', fullname : 'Marc Vermeir'};
+    */
+
+
+    /* get the list of all devices */
     $scope.devices = {};
     
-    Data.get('devices').then(function(data){
+    Data.get('devices').then(function(data) { 
         $scope.devices = data;
+
+        /* quid the error(s) ?! .. todo: handle error(s) ?! */
     });
 
     /*

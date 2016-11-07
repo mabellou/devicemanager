@@ -15,6 +15,11 @@ app.factory("Data", ['$http', '$location',
             return $http.post(serviceBase + q, object).then(function (results) {
                 return results.data;
             });
+            /*
+            }).catch(function (data) {
+                return data;
+            });
+            */
         };
         obj.put = function (q, object) {
             return $http.put(serviceBase + q, object).then(function (results) {
