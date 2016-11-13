@@ -12,7 +12,6 @@ app.controller('devicesCtrl', function ($scope, $modal, $filter, Data) {
             /* quid the error(s) ?! .. todo: handle error(s) ?! */
         });
     }
-
     /* get the user info of the 'current user' .. */
     $scope.currentuser = {};
     if (sessionStorage.userId) {
@@ -23,9 +22,7 @@ app.controller('devicesCtrl', function ($scope, $modal, $filter, Data) {
             /* capture the user data into a $scope.currentuser object .. */
             $scope.currentuser = { userid : data.id, fullname : data.fullname, profile : data.profile };
 
-            /*
-                quid the error(s) ?! .. todo: handle error(s) ?!
-            */
+            /* quid the error(s) ?! .. todo: handle error(s) ?! */
         });
     }
 
