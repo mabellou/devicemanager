@@ -1,7 +1,32 @@
-app.controller('usersCtrl', function ($scope, $modal, $filter, Data) {
-    /* todo: get the current user identifier : */
-    $scope.currentuser = { id : 98765, profile : 'administrator', fullname : 'Anthony Franssens'};
+app.controller('usersCtrl', function ($scope, $modal, $filter, Data, $location) {
+    
+    /* todo: get username & password from authentication form .. */
+    /* $scope.currentuser = { id : 98765, profile : 'administrator', fullname : 'Anthony Franssens'}; */
+    var credentials = { username : 'marcvermeir', password : 'azerty' };
 
+    $scope.currentuser = {};
+    /* authenticate the 'current user' ?! .. */ 
+    if (!sessionStorage.userToken)
+        Data.post('authenticate', credentials).then(function(data) {
+                        sessionStorage.userToken = data.token;
+                        sessionStorage.userId = data.userid;
+        });
+
+        /* quid error(s) returned ? */
+
+    /* get the user info of the 'current user' .. */
+    if (!sessionStorage.userToken)
+        $location.path('/login');
+    else {
+        /* call the (VT) Service to fetch the 'current user' info .. */
+        Data.get('user/' + sessionStorage.userId + '?token=' + sessionStorage.userToken).then(function(data) {
+            /* capture the user data into a $scope.currentuser object .. */
+            $scope.currentuser = { userid : data.id, fullname : data.fullname, profile : data.profile };
+        });
+        /* quid error(s) returned ? */
+    }
+
+    /* get the list of all VT users */
     $scope.users = {};
 
     Data.get('users').then(function(data){
