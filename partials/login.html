@@ -1,24 +1,13 @@
-<hr/>
+<hr>
 <div class="table-responsive">
     <div class="panel panel-primary">
-        <div class="panel-heading">Login
-            <!--
-            <div class="sw-search">
-                <div class="nav-search" id="nav-search">
-                    Filter: <span class="input-icon">
-                        <input placeholder="Filter users list ..." class="nav-search-input" ng-model="filterUser" ng-change="resetLimit();"  autocomplete="off" type="text" style="width:300px;" focus>
-                        <i class="search-icon fa fa-search nav-search-icon"></i>
-                    </span>
-                </div>
-            </div>
-            -->
-        </div>
+        <div class="panel-heading">Login</div>
         <div class="panel-body">
-            <table class="table table-striped">
-                <form ng-submit="login(username, password)">
+            <table class="table">
+                <form>
                     <tr>
                         <td>
-                            <label>User name</label>
+                            <label>Username</label>
                         </td>
                         <td>
                             <input type="text" ng-model="username" class="ng-pristine ng-valid">
@@ -41,8 +30,8 @@
                         <td>
                         </td>
                         <td>
-                            <button class="btn btn-success ng-click="Submit">Submit</button>
-                            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+                            <button class="btn btn-primary" type="button" ng-click="login(username, password)">Login</button>
+                            <!-- <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button> -->
                         </td>
                     </tr>
                 </form>

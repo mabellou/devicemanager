@@ -1,2 +1,6 @@
 * Avoid the Cross Origin error by installing the following Chrome (browser) extension : 
 -- https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi/related
+
+* How to 'active' the current main menu :
+-- http://fdietz.github.io/recipes-with-angular-js/urls-routing-and-partials/using-route-location-to-implement-a-navigation-menu.html
+

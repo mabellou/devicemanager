@@ -1,4 +1,19 @@
-/* OBSOLETE ?! */
+
+app.factory('Creds', function () {
+
+    /* !! credentials acts as DTO 4 the VT back-end .. all properties should be kept in lowercase !! */
+    var credentials = { username : '', password : '' };
+
+    return {
+        setCredentials: function(userName, password) {
+            credentials.username = userName;
+            credentials.password = password;
+        },
+        getCredentials: function() {
+            return credentials;
+        },
+    };
+});
 
 app.factory("Auth", ['$http', 'Data',
     function ($http, Data) {
@@ -27,6 +42,8 @@ app.factory("Auth", ['$http', 'Data',
 
             return currentuser;
         };
+
+
 
         return obj;
 }]);

@@ -8,13 +8,13 @@
     <link rel="stylesheet" href="css/custom.css" type="text/css" />
     <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css" />
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
-    <div class="blog-masthead">
+    <div class="blog-masthead" ng-controller="menuCtrl">
         <div class="container">
             <nav class="blog-nav">
-                <a class="blog-nav-item" href="#">Vapor Trail</a>
-                <a class="blog-nav-item active" href="#">Devices</a>
-                <a class="blog-nav-item" href="#/userview">Users</a>
-                <a class="blog-nav-item" href="#/login">Login</a>
+                <a ng-class="menuClass('/home')" href="#/home">Vapor Trail</a>
+                <a ng-class="menuClass('/')" href="#">Devices</a>
+                <a ng-class="menuClass('/userview')" href="#/userview">Users</a>
+                <a ng-class="menuClass('/login')" href="#/login">Login</a>
             </nav>
         </div>
     </div>
@@ -31,12 +31,14 @@
     <!-- AngularJS custom codes -->
     <script src="app/app.js"></script>
     <script src="app/data.js"></script>
+    <script src="app/auth.js"></script>
     <script src="app/directives.js"></script>
     <script src="app/directives/filtered_device_list/filtered_device_list.controller.js"></script>
     <script src="app/directives/filtered_device_list/filtered_device_list.directive.js"></script>
     <script src="app/devicesCtrl.js"></script>
     <script src="app/usersCtrl.js"></script>
     <script src="app/loginCtrl.js"></script>
+    <script src="app/menuCtrl.js"></script>
     <!-- Some Bootstrap Helper Libraries -->
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
@@ -49,7 +51,6 @@
         $('nav a').click(function() {
             $(this).addClass('active');
             $(this).siblings().removeClass('active');
-
         });
     });
     </script> 

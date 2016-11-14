@@ -1,4 +1,4 @@
-app.controller('FilteredDeviceListController', function ($scope, Data) {
+app.controller('FilteredDeviceListController', function ($scope, Data, DEVSTATUS) {
 
     $scope.columns = [
         {text:"Box ID",predicate:"boxid",sortable:true,dataType:"number"},
@@ -17,7 +17,7 @@ app.controller('FilteredDeviceListController', function ($scope, Data) {
 
     $scope.filterOnStatus = function (status) {
         return function (device) {
-            if (status == 'locked' || status == 'inuse')
+            if (status == DEVSTATUS.LOCKED || status == DEVSTATUS.INUSE)
                 return (device.statusobject.userobject && device.statusobject.userobject.userid == $scope.currentuser.userid) && (device.statusobject.status === status);
             else
                 return (!device.statusobject.userobject || device.statusobject.userobject.userid !== $scope.currentuser.userid);
@@ -29,7 +29,7 @@ app.controller('FilteredDeviceListController', function ($scope, Data) {
     };
 
     $scope.formatStatus = function (status) {
-        return status == 'inuse' ? 'in use' : status;
+        return status == DEVSTATUS.INUSE ? 'in use' : status;
     };
 
     $scope.clearFilters = function () {
@@ -38,93 +38,69 @@ app.controller('FilteredDeviceListController', function ($scope, Data) {
 
     $scope.returnDevice = function (device) {
         
-        if (device && device.statusobject && device.statusobject.status == 'inuse') {
+        if (device && device.statusobject && device.statusobject.status == DEVSTATUS.INUSE) {
 
-            var returnRequest = { id: device.id, statusobject : { status : 'available', userobject : null }};
+            var returnRequest = { id : device.id, statusobject : { status : DEVSTATUS.AVAILABLE, userobject : null }};
 
             /* call the (VT) service to RETURN the concerned device .. */
             Data.post('device/status' + '?token=' + sessionStorage.userToken, returnRequest).then(function(data) {
                 /* update the local 'model' .. */
-                device.statusobject = { status : 'available', userobject : null };
+                device.statusobject = { status : DEVSTATUS.AVAILABLE, userobject : null };
 
                 /* quid the error(s) ?! .. todo: handle error(s) ?! */
             });
-
-            /* INITIAL :
-                device.statusobject = { status : 'available', userobject : null } ;
-            */
         };
-        /*
-        else error ..
-        */
+        /* //todo: else raise error .. */
     };
 
     $scope.unlockDevice = function (device) {
         
-        if (device && device.statusobject && device.statusobject.status == 'locked') {
+        if (device && device.statusobject && device.statusobject.status == DEVSTATUS.LOCKED) {
 
-            var unlockRequest = { id: device.id, statusobject : { status : 'available', userobject : null }};
+            var unlockRequest = { id : device.id, statusobject : { status : DEVSTATUS.AVAILABLE, userobject : null }};
 
             /* call the (VT) service to UNLOCK the concerned device .. */
             Data.post('device/status' + '?token=' + sessionStorage.userToken, unlockRequest).then(function(data) {
                 /* update the local 'model' .. */
-                device.statusobject = { status : 'available', userobject : null };
+                device.statusobject = { status : DEVSTATUS.AVAILABLE, userobject : null };
 
                 /* quid the error(s) ?! .. todo: handle error(s) ?! */
             });
-
-            /* INITIAL :
-                device.statusobject = { status : 'available', userobject : null };
-            */
         };
-       /*
-            //todo: else raise error ?!
-        */
+       /* //todo: else raise error ?! */
     };
 
     $scope.confirmDevice = function (device) {
     
-        if (device && device.statusobject && device.statusobject.status == 'locked') {
+        if (device && device.statusobject && device.statusobject.status == DEVSTATUS.LOCKED) {
 
-            var confirmRequest = { id: device.id, statusobject : { status : 'inuse', userobject : { userid : $scope.currentuser.userid }}};
+            var confirmRequest = { id: device.id, statusobject : { status : DEVSTATUS.INUSE, userobject : { userid : $scope.currentuser.userid }}};
 
             /* call the (VT) service to CONFIRM the concerned device .. */
             Data.post('device/status' + '?token=' + sessionStorage.userToken, confirmRequest).then(function(data) {
                 /* update the local 'model' .. */
-                device.statusobject = { status : 'inuse', userobject : { fullname : $scope.currentuser.fullname, userid : $scope.currentuser.userid }};
+                device.statusobject = { status : DEVSTATUS.INUSE, userobject : { fullname : $scope.currentuser.fullname, userid : $scope.currentuser.userid }};
 
                 /* quid the error(s) ?! .. todo: handle error(s) ?! */
             });
-
-            /* INITIAL :
-                device.statusobject = { status : 'inuse', userobject : { fullname : 'Marc Vermeir', userid : 6789 }};
-            */
         };
-        /*
-            //todo: else raise error ?!
-        */
+        /* //todo: else raise error ?! */
     };
 
     $scope.lockDevice = function (device) {
         
-        if (device && device.statusobject && device.statusobject.status == 'available') {
+        if (device && device.statusobject && device.statusobject.status == DEVSTATUS.AVAILABLE) {
 
-            var lockRequest = { id: device.id, statusobject : { status : 'locked', userobject : { userid : $scope.currentuser.userid }}};
+            var lockRequest = { id : device.id, statusobject : { status : DEVSTATUS.LOCKED, userobject : { userid : $scope.currentuser.userid }}};
 
             /* call the (VT) service to LOCK the concerned device .. */
             Data.post('device/status' + '?token=' + sessionStorage.userToken, lockRequest).then(function(data) {
                 /* update the local 'model' .. */
-                device.statusobject = { status : 'locked', userobject : { fullname : $scope.currentuser.fullname, userid : $scope.currentuser.userid }};
+                device.statusobject = { status : DEVSTATUS.LOCKED, userobject : { fullname : $scope.currentuser.fullname, userid : $scope.currentuser.userid }};
 
                 /* quid the error(s) ?! .. todo: handle error(s) ?! */
             });
-
-            /* INITIAL :
-                device.statusobject = { status : 'locked', userobject : { fullname : $scope.currentuser.fullname, userid : $scope.currentuser.userid }};
-            */
         };
-        /*
-            //todo: else raise error ?!
-        */
+        /* //todo: else raise error ?! */
     };
 });

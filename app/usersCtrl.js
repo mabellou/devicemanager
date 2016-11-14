@@ -1,25 +1,22 @@
-app.controller('usersCtrl', function ($scope, $modal, $filter, Data, $location) {
+app.controller('usersCtrl', function ($scope, $modal, $filter, $location, Data, Creds) {
     
-    /* todo: get username & password from authentication form .. */
-    /* $scope.currentuser = { id : 98765, profile : 'administrator', fullname : 'Anthony Franssens'}; */
-    var credentials = { username : 'marcvermeir', password : 'azerty' };
-
     $scope.currentuser = {};
     /* authenticate the 'current user' ?! .. */ 
     if (!sessionStorage.userToken)
+    {
+        /* var credentials = { username : 'marcvermeir', password : 'azerty' }; */
+        var credentials = Creds.getCredentials();
+
         Data.post('authenticate', credentials).then(function(data) {
                         sessionStorage.userToken = data.token;
                         sessionStorage.userId = data.userid;
         });
-
         /* quid error(s) returned ? */
-
+    }
     /* get the user info of the 'current user' .. */
-    if (!sessionStorage.userToken)
-        /*
+    if (!sessionStorage.userToken) {
         $location.path('/login');
-        */
-        var dummy = null;
+    }
     else {
         /* call the (VT) Service to fetch the 'current user' info .. */
         Data.get('user/' + sessionStorage.userId + '?token=' + sessionStorage.userToken).then(function(data) {
@@ -35,13 +32,6 @@ app.controller('usersCtrl', function ($scope, $modal, $filter, Data, $location) 
     Data.get('users').then(function(data){
         $scope.users = data;
     });
-
-    /* 
-    $scope.users = [{ id : 98765, badgeid : '1011001', fullname : 'Anthony Franssens', firstname : 'Anthony', lastname : 'Franssens', profile : 'administrator', startdate : '01/09/2016', enddate : null, counterlocked : 0, counterinuse : 1 },
-                    { id : 6789, badgeid : '1011110', fullname : 'Marc Vermeir', firstname : 'Marc', lastname : 'Vermeir', profile : 'tester', startdate : '01/09/2016', enddate : null, counterlocked : 1, counterinuse : 1 },
-                    { id : 12345, badgeid : '1011111', fullname : 'Marwan Bellouti', firstname : 'Marwan', lastname : 'Bellouti', profile : 'tester', startdate : '01/09/2016', enddate : null, counterlocked : 1, counterinuse : 0 },
-                    ];
-    */
 
     $scope.deleteUser = function(user) {
         /* todo: delete user should be a logical delete where the enddate will be set equal to today */
@@ -96,13 +86,13 @@ app.controller('usersCtrl', function ($scope, $modal, $filter, Data, $location) 
         */
     };
 
-    $scope.columns = [ {text:"Badge ID",predicate:"badgeid",sortable:true,dataType:"number"},
-                       {text:"Name",predicate:"fullname",sortable:true},
-                       {text:"Profile",predicate:"profile",sortable:true},
-                       {text:"Active Until",predicate:"enddate",sortable:true},
-                       {text:"#Devices Locked",predicate:"counterlocked",sortable:true,dataType:"number"},
-                       {text:"#Devices In Use",predicate:"counterinuse",sortable:true,dataType:"number"},
-                       {text:"Action",predicate:"",sortable:false}
+    $scope.columns = [ {text : "Badge ID", predicate : "badgeid", sortable : true, dataType : "number" },
+                       {text : "Name", predicate : "fullname", sortable : true },
+                       {text : "Profile", predicate : "profile", sortable : true },
+                       {text : "Active Until", predicate : "enddate", sortable : true },
+                       {text : "#Devices Locked", predicate : "counterlocked", sortable : true, dataType : "number" },
+                       {text : "#Devices In Use", predicate : "counterinuse", sortable : true, dataType : "number" },
+                       {text : "Action", predicate : "", sortable : false}
                      ];
 
 });

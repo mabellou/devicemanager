@@ -1,15 +1,15 @@
-app.controller('loginCtrl', function ($scope, $modal, $filter, Data, $location) {
+app.controller('loginCtrl', function ($scope, $modal, $filter, $location, Creds) {
 
   $scope.loginError = "";
   $scope.loggedUser = "";
 
   $scope.cancel = function() {
-    console.log('>>cancel');
+    console.log('loginCtrl.cancel() : NOT SUPPORTED!');
   };
 
-  $scope.login = function(u, p) {
-    console.log('>>login ' + u + '/' + p);
-
+  $scope.login = function(userName, password) {
+    Creds.setCredentials(userName, password)
+    /* navigate to the 'home' page .. */
+    $location.path('/home');
   };
-  
 });
