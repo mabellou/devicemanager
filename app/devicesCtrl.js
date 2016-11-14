@@ -15,7 +15,10 @@ app.controller('devicesCtrl', function ($scope, $modal, $filter, Data, $location
 
     /* get the user info of the 'current user' .. */
     if (!sessionStorage.userToken)
+        /*
         $location.path('/login');
+        */
+        var dummy = null;
     else {
         /* call the (VT) Service to fetch the 'current user' info .. */
         Data.get('user/' + sessionStorage.userId + '?token=' + sessionStorage.userToken).then(function(data) {
