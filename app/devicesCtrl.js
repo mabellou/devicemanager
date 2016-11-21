@@ -1,20 +1,23 @@
-app.controller('devicesCtrl', function ($scope, $modal, $filter, $location, Data, Creds) {
+app.controller('devicesCtrl', function ($scope, $modal, $filter, $location, Data, Creds, USRPROFILE) {
      
     $scope.currentuser = {};
     $scope.devices = {};
 
     /* authenticate the 'current user' ?! .. */ 
-    if (!sessionStorage.userToken)
+    if (!sessionStorage.userToken || sessionStorage.userToken == '')
     {
         /* var credentials = { username : 'marcvermeir', password : 'azerty' }; */
         var credentials = Creds.getCredentials();
+        if (credentials.username == '' || credentials.password == '') {
+            $location.path('/login');
+        }
 
         Data.post('authenticate', credentials).then(function(data) {
             sessionStorage.userToken = data.token;
             sessionStorage.userId = data.userid;
 
             /* get the user info of the 'current user' .. */
-            if (!sessionStorage.userToken) {
+            if (!sessionStorage.userToken || sessionStorage.userToken == '') {
                 $location.path('/login');
             }
             else {
@@ -22,23 +25,32 @@ app.controller('devicesCtrl', function ($scope, $modal, $filter, $location, Data
                 Data.get('user/' + sessionStorage.userId + '?token=' + sessionStorage.userToken).then(function(data) {
                     /* capture the user data into a $scope.currentuser object .. */
                     $scope.currentuser = { userid : data.id, fullname : data.fullname, profile : data.profile };
+                    sessionStorage.userProfile = $scope.currentuser.profile;
 
                     Data.get('devices?token=' + sessionStorage.userToken).then(function(data) { 
                         $scope.devices = data;
                     });
-                    /* quid error(s) returned ? */
+                    // quid error(s) returned ? 
                 });
-                /* quid error(s) returned ? */
+                // quid error(s) returned ?
             }
         });
-        /* quid error(s) returned ? */
+        // quid error(s) returned ?
     }
     else {
+        $scope.currentuser = { profile: sessionStorage.userProfile };
+
         Data.get('devices?token=' + sessionStorage.userToken).then(function(data) { 
             $scope.devices = data;
         });
-        /* quid error(s) returned ? */
-    }
+        // quid error(s) returned ?
+    };
+
+    /* ???
+    $scope.IsAdministrator = function() {
+        return ($scope.currentuser.profile == USRPROFILE.ADMINISTRATOR)
+    };
+    */
 
 /* NOT YET SUPPORTED
     $scope.changeDeviceStatus = function(device) {

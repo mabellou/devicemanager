@@ -7,7 +7,7 @@ app.constant('USRPROFILE',  { 'ADMINISTRATOR' : 'administrator', 'TESTER' : 'tes
 app.config(['$routeProvider',
   function($routeProvider) {
     $routeProvider
-    .when('/', {
+    .when('/devices', {
       title: 'Devices', 
       templateUrl: 'partials/devices.html',
       controller: 'devicesCtrl'
@@ -17,12 +17,12 @@ app.config(['$routeProvider',
       templateUrl: 'partials/devices.html',
       controller: 'devicesCtrl'
     })
-    .when('/userview', {
+    .when('/users', {
       title: 'Users',
       templateUrl: 'partials/users.html',
       controller: 'usersCtrl'
     })
-    .when('/login', {
+    .when('/', {
       title: 'Login',
       templateUrl: 'partials/login.html',
       controller: 'loginCtrl'  

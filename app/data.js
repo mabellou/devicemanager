@@ -12,6 +12,7 @@ app.factory("Data", ['$http', '$location',
                 })
                 .catch(function (results) {
                     console.log('Error in http get ' + q);
+                    return null;
                 });
         };
 
@@ -27,6 +28,7 @@ app.factory("Data", ['$http', '$location',
                 })
                 .catch(function (results) {
                     console.log('Error in http post ' + q);
+                    return null;
                 });
         };
 

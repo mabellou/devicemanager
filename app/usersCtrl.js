@@ -1,54 +1,70 @@
-app.controller('usersCtrl', function ($scope, $modal, $filter, $location, Data, Creds) {
-    
-    $scope.currentuser = {};
-    $scope.users = {};
+app.controller('usersCtrl', function($scope, $modal, $filter, $location, Data, Creds, USRPROFILE) {
 
-    /* authenticate the 'current user' ?! .. */ 
-    if (!sessionStorage.userToken)
-    {
+    $scope.currentuser = {};
+    $scope.users = [];
+
+    /* authenticate the 'current user' ?! .. */
+    if (!sessionStorage.userToken || sessionStorage.userToken == '') {
         /* var credentials = { username : 'marcvermeir', password : 'azerty' }; */
         var credentials = Creds.getCredentials();
+        if (credentials.username == '' || credentials.password == '') {
+            $location.path('/login');
+        }
 
         Data.post('authenticate', credentials).then(function(data) {
             sessionStorage.userToken = data.token;
             sessionStorage.userId = data.userid;
 
             /* get the user info of the 'current user' .. */
-            if (!sessionStorage.userToken) {
+            if (!sessionStorage.userToken || sessionStorage.userToken == '') {
                 $location.path('/login');
-            }
-            else {
+            } else {
                 /* call the (VT) Service to fetch the 'current user' info .. */
                 Data.get('user/' + sessionStorage.userId + '?token=' + sessionStorage.userToken).then(function(data) {
                     /* capture the user data into a $scope.currentuser object .. */
-                    $scope.currentuser = { userid : data.id, fullname : data.fullname, profile : data.profile };
+                    $scope.currentuser = { userid: data.id, fullname: data.fullname, profile: data.profile };
+                    sessionStorage.userProfile = $scope.currentuser.profile;
 
-                    Data.get('users?token=' + sessionStorage.userToken).then(function(data) {
-                        $scope.users = data;
-                    });
-                    /* quid error(s) returned ? */
+                    // only Administrators can see the list of users .. 
+                    if ($scope.currentuser.profile == USRPROFILE.ADMINISTRATOR) {
+                        /* call the (VT) Service to fetch the list of users .. */
+                        Data.get('users?token=' + sessionStorage.userToken).then(function(data) {
+                            $scope.users = data;
+                        });
+                        // quid error(s) returned ? 
+                    }
                 });
-                /* quid error(s) returned ? */
+                // quid error(s) returned ?
             }
         });
-        /* quid error(s) returned ? */
-    }
-    else {
-        Data.get('users?token=' + sessionStorage.userToken).then(function(data) {
-            $scope.users = data;
-        });
-        /* quid error(s) returned ? */
+        // quid error(s) returned ?
+    } else {
+        $scope.currentuser = { profile: sessionStorage.userProfile };
+
+        // only Administrators can see the list of users .. 
+        if ($scope.currentuser.profile == USRPROFILE.ADMINISTRATOR) {
+            Data.get('users?token=' + sessionStorage.userToken).then(function(data) {
+                $scope.users = data;
+            });
+            // quid error(s) returned ?
+        }
     }
 
-    $scope.columns = [ {text : "Badge ID", predicate : "badgeid", sortable : true, dataType : "number" },
-                       {text : "Name", predicate : "fullname", sortable : true },
-                       {text : "Profile", predicate : "profile", sortable : true },
-                       {text : "Active Until", predicate : "enddate", sortable : true },
-                       {text : "#Devices Locked", predicate : "counterlocked", sortable : true, dataType : "number" },
-                       {text : "#Devices In Use", predicate : "counterinuse", sortable : true, dataType : "number" },
-                       {text : "Action", predicate : "", sortable : false}
-                     ];
-  
+    $scope.columns = [{ text: "Badge ID", predicate: "badgeid", sortable: true, dataType: "number" },
+        { text: "Name", predicate: "fullname", sortable: true },
+        { text: "Profile", predicate: "profile", sortable: true },
+        { text: "Active Until", predicate: "enddate", sortable: true },
+        { text: "#Devices Locked", predicate: "counterlocked", sortable: true, dataType: "number" },
+        { text: "#Devices In Use", predicate: "counterinuse", sortable: true, dataType: "number" },
+        { text: "Action", predicate: "", sortable: false }
+    ];
+
+    /* ???
+    $scope.isAdministrator = function() {
+        return ($scope.currentuser.profile == USRPROFILE.ADMINISTRATOR)
+    };
+    */
+
     /* NOT YET SUPPORTED
     $scope.deleteUser = function(user) {
         // todo: delete user should be a logical delete where the enddate will be set equal to today

@@ -2,17 +2,39 @@
 
 -- organise demo for end user
    -> what need to be done (marwan): 
-                - Give a user friendly respone when the badge is used;
+                - Give a user friendly response when the badge is used;
                 - Terminate the authentication
    -> what need to be done (marc):  
 
+
 Front end:
--- Implement the constraints .. check list/specs by Anthony F. ...
--- List Devices .. devices inuse && locked should be aligned vertically with list #3
+
+*** Quid the action (lock, unlock, confirm & return) buttons for administrators ??
+
+** Implement the constraints .. check list/specs by Anthony F. ... check papernotes ?! ...
+  []  1.    White list of users: no logon, no access
+  []  2.    Permitted user groups:
+        a.    ‘T’ = Tester: must only see/use devices for his group
+        b.    ‘I’ = Incubator: must see/use devices for his group + ‘T’
+        c.    ‘S’ = Savi: must see/use devices for his group + ‘T’
+        d.    ‘B’ = Business: must only see/use devices for his group
+        e.    ‘A’ = admin: must see everything J
+  []  3.    Max. number of devices per user = 3
+  []  4.    Max. duration per device:
+        a.    B: 48 hrs
+        b.    T/I/S: either 5 hrs, or EOB
+                                                        
+
+  [OK] list of user only available for administrator
+  
+
+-- QUID ErrorMessages (= HTTP 200 ?!) returned by BackEnd ??
 -- CRUD operations 4 administrators .. on Devices, on Users, ...
--- list of user only available for administrator
--- the user can lock and use only 5 devices
--- the column must be aligned
+
+-- Disable menu-option(s) in case of unauthorized access, e.g. only admins can see the list of users 
+-- List (devices && users) columns must be aligned
+-- List Devices .. devices inuse && locked should be aligned vertically with list #3
+
 
 Back end:
 -- return the device list in function of the user
@@ -21,6 +43,13 @@ Back end:
 -- list of user only available for administrator
 -- how to communicate between the badge and the user
 
+
+After Care:
+-- 
+
+Documentation:
+
+-- complete / update the My SQL database 'create' script ?
 
 
 ** Questions :
