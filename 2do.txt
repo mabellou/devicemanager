@@ -1,7 +1,24 @@
-*** ASAP :
+*** TODO ASAP :
+
+-- organise demo for end user
+   -> what need to be done (marwan): 
+                - Give a user friendly respone when the badge is used;
+                - Terminate the authentication
+   -> what need to be done (marc):  
+
+Front end:
 -- Implement the constraints .. check list/specs by Anthony F. ...
 -- List Devices .. devices inuse && locked should be aligned vertically with list #3
 -- CRUD operations 4 administrators .. on Devices, on Users, ...
+-- list of user only available for administrator
+
+Back end:
+-- return the device list in function of the user
+-- only the valid user can be authenticated
+-- for an admin, also the unavailable device are returned, not for the other
+-- list of user only available for administrator
+-- how to communicate between the badge and the user
+
 
 
 ** Questions :
