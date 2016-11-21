@@ -11,6 +11,8 @@ Front end:
 -- List Devices .. devices inuse && locked should be aligned vertically with list #3
 -- CRUD operations 4 administrators .. on Devices, on Users, ...
 -- list of user only available for administrator
+-- the user can lock and use only 5 devices
+-- the column must be aligned
 
 Back end:
 -- return the device list in function of the user
