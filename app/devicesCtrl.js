@@ -1,6 +1,8 @@
 app.controller('devicesCtrl', function ($scope, $modal, $filter, $location, Data, Creds) {
-    
+     
     $scope.currentuser = {};
+    $scope.devices = {};
+
     /* authenticate the 'current user' ?! .. */ 
     if (!sessionStorage.userToken)
     {
@@ -8,39 +10,41 @@ app.controller('devicesCtrl', function ($scope, $modal, $filter, $location, Data
         var credentials = Creds.getCredentials();
 
         Data.post('authenticate', credentials).then(function(data) {
-                        sessionStorage.userToken = data.token;
-                        sessionStorage.userId = data.userid;
+            sessionStorage.userToken = data.token;
+            sessionStorage.userId = data.userid;
+
+            /* get the user info of the 'current user' .. */
+            if (!sessionStorage.userToken) {
+                $location.path('/login');
+            }
+            else {
+                /* call the (VT) Service to fetch the 'current user' info .. */
+                Data.get('user/' + sessionStorage.userId + '?token=' + sessionStorage.userToken).then(function(data) {
+                    /* capture the user data into a $scope.currentuser object .. */
+                    $scope.currentuser = { userid : data.id, fullname : data.fullname, profile : data.profile };
+
+                    Data.get('devices?token=' + sessionStorage.userToken).then(function(data) { 
+                        $scope.devices = data;
+                    });
+                    /* quid error(s) returned ? */
+                });
+                /* quid error(s) returned ? */
+            }
         });
         /* quid error(s) returned ? */
-    }
-    /* get the user info of the 'current user' .. */
-    if (!sessionStorage.userToken) {
-        $location.path('/login');
     }
     else {
-        /* call the (VT) Service to fetch the 'current user' info .. */
-        Data.get('user/' + sessionStorage.userId + '?token=' + sessionStorage.userToken).then(function(data) {
-            /* capture the user data into a $scope.currentuser object .. */
-            $scope.currentuser = { userid : data.id, fullname : data.fullname, profile : data.profile };
+        Data.get('devices?token=' + sessionStorage.userToken).then(function(data) { 
+            $scope.devices = data;
         });
         /* quid error(s) returned ? */
     }
 
-    /* get the list of all devices */
-    $scope.devices = {};
-    
-    Data.get('devices').then(function(data) { 
-        $scope.devices = data;
-
-        /* quid the error(s) ?! .. todo: handle error(s) ?! */
-    });
-
-
-    $scope.changeDeviceStatus = function(device){
+/* NOT YET SUPPORTED
+    $scope.changeDeviceStatus = function(device) {
         console.log('devicesCtrl.changeDeviceStatus() : NOT SUPPORTED!');
         return;
         
-        /* 
         if(device.status == "Unavailable"){
             device.status = "Available";
             device.name = "";
@@ -77,7 +81,6 @@ app.controller('devicesCtrl', function ($scope, $modal, $filter, $location, Data
                 device.name = selectedObject.name;
             });
         }
-        */
     };
 
     $scope.deleteDevice = function(device){
@@ -126,7 +129,12 @@ app.controller('devicesCtrl', function ($scope, $modal, $filter, $location, Data
                 $scope.devices = $filter('orderBy')($scope.devices, 'caseid');
         });
     };
+    
+*/
+
 });
+
+/* NOT YET SUPPORTED
 
 app.controller('deviceEditCtrl', function ($scope, $modalInstance, item, Data) {
 
@@ -214,3 +222,4 @@ app.controller('deviceCreateCtrl', function ($scope, $modalInstance, item, Data)
                 });
         };
 });
+*/

@@ -1,6 +1,8 @@
 app.controller('usersCtrl', function ($scope, $modal, $filter, $location, Data, Creds) {
     
     $scope.currentuser = {};
+    $scope.users = {};
+
     /* authenticate the 'current user' ?! .. */ 
     if (!sessionStorage.userToken)
     {
@@ -8,33 +10,48 @@ app.controller('usersCtrl', function ($scope, $modal, $filter, $location, Data, 
         var credentials = Creds.getCredentials();
 
         Data.post('authenticate', credentials).then(function(data) {
-                        sessionStorage.userToken = data.token;
-                        sessionStorage.userId = data.userid;
+            sessionStorage.userToken = data.token;
+            sessionStorage.userId = data.userid;
+
+            /* get the user info of the 'current user' .. */
+            if (!sessionStorage.userToken) {
+                $location.path('/login');
+            }
+            else {
+                /* call the (VT) Service to fetch the 'current user' info .. */
+                Data.get('user/' + sessionStorage.userId + '?token=' + sessionStorage.userToken).then(function(data) {
+                    /* capture the user data into a $scope.currentuser object .. */
+                    $scope.currentuser = { userid : data.id, fullname : data.fullname, profile : data.profile };
+
+                    Data.get('users?token=' + sessionStorage.userToken).then(function(data) {
+                        $scope.users = data;
+                    });
+                    /* quid error(s) returned ? */
+                });
+                /* quid error(s) returned ? */
+            }
         });
         /* quid error(s) returned ? */
-    }
-    /* get the user info of the 'current user' .. */
-    if (!sessionStorage.userToken) {
-        $location.path('/login');
     }
     else {
-        /* call the (VT) Service to fetch the 'current user' info .. */
-        Data.get('user/' + sessionStorage.userId + '?token=' + sessionStorage.userToken).then(function(data) {
-            /* capture the user data into a $scope.currentuser object .. */
-            $scope.currentuser = { userid : data.id, fullname : data.fullname, profile : data.profile };
+        Data.get('users?token=' + sessionStorage.userToken).then(function(data) {
+            $scope.users = data;
         });
         /* quid error(s) returned ? */
     }
 
-    /* get the list of all VT users */
-    $scope.users = {};
-
-    Data.get('users').then(function(data){
-        $scope.users = data;
-    });
-
+    $scope.columns = [ {text : "Badge ID", predicate : "badgeid", sortable : true, dataType : "number" },
+                       {text : "Name", predicate : "fullname", sortable : true },
+                       {text : "Profile", predicate : "profile", sortable : true },
+                       {text : "Active Until", predicate : "enddate", sortable : true },
+                       {text : "#Devices Locked", predicate : "counterlocked", sortable : true, dataType : "number" },
+                       {text : "#Devices In Use", predicate : "counterinuse", sortable : true, dataType : "number" },
+                       {text : "Action", predicate : "", sortable : false}
+                     ];
+  
+    /* NOT YET SUPPORTED
     $scope.deleteUser = function(user) {
-        /* todo: delete user should be a logical delete where the enddate will be set equal to today */
+        // todo: delete user should be a logical delete where the enddate will be set equal to today
         if(confirm("Are you sure to remove the user")){
             Data.delete("users/"+user.badgeid).then(function(result){
                 $scope.users = _.without($scope.users, _.findWhere($scope.users, {badgeid:user.badgeid}));
@@ -81,22 +98,13 @@ app.controller('usersCtrl', function ($scope, $modal, $filter, $location, Data, 
     
     $scope.getClass = function(date) {
         return 'info';
-        /* todo: class value should be 'danger' if date (dd/mm/yyyy) < currentdate, otherwise return 'info'
-        return {'info': date - today <= 0, 'danger': (date - today > 0 && date - today <= 3)};
-        */
+        // todo: class value should be 'danger' if date (dd/mm/yyyy) < currentdate, otherwise return 'info'
+        // return {'info': date - today <= 0, 'danger': (date - today > 0 && date - today <= 3)};
     };
-
-    $scope.columns = [ {text : "Badge ID", predicate : "badgeid", sortable : true, dataType : "number" },
-                       {text : "Name", predicate : "fullname", sortable : true },
-                       {text : "Profile", predicate : "profile", sortable : true },
-                       {text : "Active Until", predicate : "enddate", sortable : true },
-                       {text : "#Devices Locked", predicate : "counterlocked", sortable : true, dataType : "number" },
-                       {text : "#Devices In Use", predicate : "counterinuse", sortable : true, dataType : "number" },
-                       {text : "Action", predicate : "", sortable : false}
-                     ];
-
+    */
 });
 
+/* NOT YET SUPPORTED
 app.controller('userEditCtrl', function ($scope, $modalInstance, item, Data) {
 
   $scope.user = angular.copy(item);
@@ -151,3 +159,4 @@ app.controller('userCreateCtrl', function ($scope, $modalInstance, item, Data) {
                 });
         };
 });
+*/

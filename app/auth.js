@@ -15,7 +15,7 @@ app.factory('Creds', function () {
     };
 });
 
-/*
+/* OBSOLETE ?!
 app.factory("Auth", ['$http', 'Data',
     function ($http, Data) {
 

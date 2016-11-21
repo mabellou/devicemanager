@@ -8,6 +8,10 @@ app.controller('loginCtrl', function ($scope, $modal, $filter, $location, Creds)
   };
 
   $scope.login = function(userName, password) {
+
+    sessionStorage.userToken = '';
+    sessionStorage.userId = '';
+
     Creds.setCredentials(userName, password)
     /* navigate to the 'home' page .. */
     $location.path('/home');

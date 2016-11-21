@@ -1,7 +1,7 @@
 app.factory("Data", ['$http', '$location',
     function ($http, $q, $location) {
 
-        var serviceBase = 'https://devicerestnodejsv1.herokuapp.com/api/v1/';
+        var serviceBase = 'https://devicerestnodejsv1.herokuapp.com/private/api/v1/';
 
         var obj = {};
 
@@ -16,6 +16,11 @@ app.factory("Data", ['$http', '$location',
         };
 
         obj.post = function (q, object) {
+            // authentication should be done via the public service operation
+            if (q == 'authenticate') {
+                serviceBase = serviceBase.replace('/private', '');   
+            }
+
             return $http.post(serviceBase + q, object)
                 .then(function (results) {
                     return results.data;
