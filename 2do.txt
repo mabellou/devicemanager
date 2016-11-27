@@ -7,55 +7,64 @@
    -> what need to be done (marc):  
 
 
-Front end:
 
-*** Quid the action (lock, unlock, confirm & return) buttons for administrators ??
+*** 2DO - Front end :
+
+
 
 ** Implement the constraints .. check list/specs by Anthony F. ... check papernotes ?! ...
-  []  1.    White list of users: no logon, no access
-  []  2.    Permitted user groups:
-        a.    ‘T’ = Tester: must only see/use devices for his group
-        b.    ‘I’ = Incubator: must see/use devices for his group + ‘T’
-        c.    ‘S’ = Savi: must see/use devices for his group + ‘T’
-        d.    ‘B’ = Business: must only see/use devices for his group
-        e.    ‘A’ = admin: must see everything J
-  []  3.    Max. number of devices per user = 3
-  []  4.    Max. duration per device:
-        a.    B: 48 hrs
-        b.    T/I/S: either 5 hrs, or EOB
+  [FE : OK]  1.    White list of users: no logon, no access
+  [BE :   ]  2.    Permitted user groups:
+                    a.    ‘T’ = Tester: must only see/use devices for his group
+                    b.    ‘I’ = Incubator: must see/use devices for his group + ‘T’
+                    c.    ‘S’ = Savi: must see/use devices for his group + ‘T’
+                    d.    ‘B’ = Business: must only see/use devices for his group
+                    e.    ‘A’ = admin: must see everything 
+
+  [FE : ][BE : ]  3.    Max. number of devices per user = 3
+  [FE : ][BE : ]  4.    Max. duration per device:
+                        a.    B: 48 hrs
+                        b.    T/I/S: either 5 hrs, or EOB
                                                         
 
-  [OK] list of user only available for administrator
+  [FE: OK] list of users only available for administrator
   
 
--- QUID ErrorMessages (= HTTP 200 ?!) returned by BackEnd ??
--- CRUD operations 4 administrators .. on Devices, on Users, ...
+** 
+  -- QUID ErrorMessages (= HTTP 200 ?!) returned by BackEnd ??
+  -- CRUD operations 4 administrators .. on Devices, on Users, ...
 
--- Disable menu-option(s) in case of unauthorized access, e.g. only admins can see the list of users 
--- List (devices && users) columns must be aligned
--- List Devices .. devices inuse && locked should be aligned vertically with list #3
+  -- List (devices && users) columns must be aligned
+  -- List Devices .. devices inuse && locked should be aligned vertically with list #3
 
 
-Back end:
--- return the device list in function of the user
+*** 2DO - Back end :
+
+-- return the device list in function of the user (profile ..)
 -- only the valid user can be authenticated
 -- for an admin, also the unavailable device are returned, not for the other
 -- list of user only available for administrator
 -- how to communicate between the badge and the user
 
 
-After Care:
--- 
-
-Documentation:
-
--- complete / update the My SQL database 'create' script ?
 
 
-** Questions :
+
+
+
+** Questions / 2check :
 
 ° Quid a BUILD app approach based on Grunt/Gulp or Webpack ?!
 
-** 2 CHECK:
+°°° quid the actions (lock, unlock, confirm & return) buttons for administrators ?? ... can an administrator also play the role of a tester, of a .. ??
+
+
+* After Care ??
 
 -- http://softwareninjaneer.com/blog/creating-an-angularjs-reset-field-directive/
+
+
+* Documentation ?! :
+
+-- complete / update the My SQL database 'create' script ?
+
