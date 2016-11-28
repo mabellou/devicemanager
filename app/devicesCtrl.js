@@ -1,7 +1,40 @@
-app.controller('devicesCtrl', function ($scope, $modal, $filter, $location, Data, Creds, USRPROFILE) {
+app.controller('devicesCtrl', function ($scope, $modal, $filter, $location, $interval, Data, Creds, USRPROFILE, CONFIG) {
      
     $scope.currentuser = {};
     $scope.devices = {};
+
+    $interval( function(){ $scope.callAtInterval(); }, CONFIG.REFRESHINTERVAL);
+
+    $scope.fetchDevices = function() {
+        Data.get('devices?token=' + sessionStorage.userToken).then(function(data) { 
+            $scope.devices = data;
+        });
+    };
+
+     $scope.callAtInterval = function() {
+        $scope.fetchDevices();
+    };
+
+    /*
+    $scope.create = function (p,size) {
+        var modalInstance = $modal.open({
+          templateUrl: 'partials/devicesEdit.html',
+          controller: 'deviceCreateCtrl',
+          size: size,
+          resolve: {
+            item: function () {
+              return p;
+            }
+          }
+        });
+        modalInstance.result.then(function(selectedObject) {
+                delete selectedObject.save;
+                delete selectedObject.id;
+                $scope.devices.push(selectedObject);
+                $scope.devices = $filter('orderBy')($scope.devices, 'caseid');
+        });
+    };
+    */
 
     /* authenticate the 'current user' ?! .. */ 
     if (!sessionStorage.userToken || sessionStorage.userToken == '')
@@ -27,9 +60,10 @@ app.controller('devicesCtrl', function ($scope, $modal, $filter, $location, Data
                     $scope.currentuser = { userid : data.id, fullname : data.fullname, profile : data.profile };
                     sessionStorage.userProfile = $scope.currentuser.profile;
 
-                    Data.get('devices?token=' + sessionStorage.userToken).then(function(data) { 
-                        $scope.devices = data;
-                    });
+                    // Data.get('devices?token=' + sessionStorage.userToken).then(function(data) { 
+                    //     $scope.devices = data;
+                    // });
+                    $scope.fetchDevices();
                     // quid error(s) returned ? 
                 });
                 // quid error(s) returned ?
@@ -40,12 +74,15 @@ app.controller('devicesCtrl', function ($scope, $modal, $filter, $location, Data
     else {
         $scope.currentuser = { profile: sessionStorage.userProfile };
 
-        Data.get('devices?token=' + sessionStorage.userToken).then(function(data) { 
-            $scope.devices = data;
-        });
+        //Data.get('devices?token=' + sessionStorage.userToken).then(function(data) { 
+        //    $scope.devices = data;
+        //});
+        $scope.fetchDevices();
+
         // quid error(s) returned ?
     };
 
+   
     /* ???
     $scope.IsAdministrator = function() {
         return ($scope.currentuser.profile == USRPROFILE.ADMINISTRATOR)

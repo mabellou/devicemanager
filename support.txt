@@ -1,3 +1,6 @@
+* Browser web app refreshes : 
+-- http://tutorials.jenkov.com/angularjs/timeout-interval.html#interval
+
 * Avoid the Cross Origin error by installing the following Chrome (browser) extension : 
 -- https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi/related
 

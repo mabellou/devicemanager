@@ -3,6 +3,7 @@ var app = angular.module('myApp', ['ngRoute', 'ui.bootstrap', 'ngAnimate']);
 app.constant('DEVSTATUS',   { 'AVAILABLE' : 'available', 'LOCKED' : 'locked', 'INUSE' : 'inuse' });
 app.constant('DEVTYPE',     { 'SMARTPHONE' : 'smartphone', 'TABLET' : 'tablet' });
 app.constant('USRPROFILE',  { 'ADMINISTRATOR' : 'administrator', 'TESTER' : 'tester' });
+app.constant('CONFIG',      { 'MAXDEVICES4CURUSR' : 3, REFRESHINTERVAL : 3000 });
 
 app.config(['$routeProvider',
   function($routeProvider) {

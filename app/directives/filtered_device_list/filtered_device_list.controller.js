@@ -1,4 +1,6 @@
-app.controller('FilteredDeviceListController', function ($scope, Data, DEVSTATUS) {
+app.controller('FilteredDeviceListController', function ($scope, Data, DEVSTATUS, CONFIG) {
+
+    // console.log($scope.currentuser.profile);
 
     $scope.columns = [
         {text:"Box ID",predicate:"boxid",sortable:true,dataType:"number"},
@@ -15,6 +17,24 @@ app.controller('FilteredDeviceListController', function ($scope, Data, DEVSTATUS
     
     $scope.filters = {};
 
+    $scope.countDevices4CurrentUser = function () {
+        var count = 0;
+
+        // ..count the devices InUse or Locked by the current user ..
+        angular.forEach($scope.devices, function(device) {
+            if ((device.statusobject.status == DEVSTATUS.LOCKED || device.statusobject.status == DEVSTATUS.INUSE) &&
+                (device.statusobject.userobject && device.statusobject.userobject.userid == $scope.currentuser.userid))
+                count++;
+        });
+
+        return count;
+    };
+
+    $scope.lockDisabled = function () {
+        // .. constraint implemented : a 'VT' user can have maxium .. devices in use or locked :
+        return $scope.countDevices4CurrentUser() >= CONFIG.MAXDEVICES4CURUSR;
+    };
+
     $scope.filterOnStatus = function (status) {
         return function (device) {
             if (status == DEVSTATUS.LOCKED || status == DEVSTATUS.INUSE)
@@ -25,7 +45,7 @@ app.controller('FilteredDeviceListController', function ($scope, Data, DEVSTATUS
     };
 
     $scope.getClass = function() {
-        return 'info';
+        return 'info'
     };
 
     $scope.formatStatus = function (status) {

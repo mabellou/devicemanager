@@ -14,17 +14,21 @@
 
 ** Implement the constraints .. check list/specs by Anthony F. ... check papernotes ?! ...
   [FE : OK]  1.    White list of users: no logon, no access
-  [BE :   ]  2.    Permitted user groups:
+  [BE : ??]  2.    Permitted user groups:
                     a.    ‘T’ = Tester: must only see/use devices for his group
                     b.    ‘I’ = Incubator: must see/use devices for his group + ‘T’
                     c.    ‘S’ = Savi: must see/use devices for his group + ‘T’
                     d.    ‘B’ = Business: must only see/use devices for his group
                     e.    ‘A’ = admin: must see everything 
 
-  [FE : ][BE : ]  3.    Max. number of devices per user = 3
-  [FE : ][BE : ]  4.    Max. duration per device:
+  [FE : OK]  3.    Max. number of devices per user = 3
+  [FE : ][BE : ]  4.  Max. duration LOCKED per device: 15min .. 
+                      >> action  : unlock device automatically (by BE ?)
+
+                      Max. duration IN USE per device:
                         a.    B: 48 hrs
                         b.    T/I/S: either 5 hrs, or EOB
+                      >> action : show device with red background (by FE)
                                                         
 
   [FE: OK] list of users only available for administrator
@@ -39,6 +43,8 @@
 
 
 *** 2DO - Back end :
+
+-- provide a service operation which returns configuration items : max nbr of devices per user, ..
 
 -- return the device list in function of the user (profile ..)
 -- only the valid user can be authenticated
