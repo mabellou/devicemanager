@@ -14,7 +14,7 @@
 
 ** Implement the constraints .. check list/specs by Anthony F. ... check papernotes ?! ...
   [FE : OK]  1.    White list of users: no logon, no access
-  [BE :   ]  2.    Permitted user groups:
+  [BE : OK]  2.    Permitted user groups:
                     a.    ‘T’ = Tester: must only see/use devices for his group
                     b.    ‘I’ = Incubator: must see/use devices for his group + ‘T’
                     c.    ‘S’ = Savi: must see/use devices for his group + ‘T’
@@ -40,10 +40,6 @@
 
 *** 2DO - Back end :
 
--- return the device list in function of the user (profile ..)
--- only the valid user can be authenticated
--- for an admin, also the unavailable device are returned, not for the other
--- list of user only available for administrator
 -- how to communicate between the badge and the user
 
 
