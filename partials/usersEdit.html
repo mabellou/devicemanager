@@ -2,7 +2,7 @@
         <i class="fa fa-times-circle-o" style="margin:10px;color:blue;"></i>
     </button>
     <div class="modal-header">
-        <h3 class="modal-title">{{title}}</h3>
+        <h4 class="modal-title">{{title}}</h4>
     </div>
     <div class="modal-body">
         <form name="user_form" class="form-horizontal" role="form" novalidate>
@@ -12,8 +12,15 @@
             </form-element>
             
             <form-element label="NAME" mod="user">
-                <input type="text" name="name" class="user_form-control" placeholder="NAME" ng-model="user.name" />
+                <input type="text" name="fullname" class="user_form-control" placeholder="FULLNAME" 
+                ng-model="user.fullname" />
             </form-element>
+
+            <form-element label="PROFILE" mod="user">
+                <input type="text" name="profile" class="user_form-control" placeholder="PROFILE" ng-model="user.profile" />
+            </form-element>
+
+            
 
             <div class="space"></div>
             <div class="space-4"></div>

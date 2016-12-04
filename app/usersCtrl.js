@@ -12,6 +12,25 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, Data, C
         });
     };
 
+    $scope.create = function (p,size) {
+        var modalInstance = $modal.open({
+          templateUrl: 'partials/usersEdit.html',
+          controller: 'userCreateCtrl',
+          size: size,
+          resolve: {
+            item: function () {
+              return p;
+            }
+          }
+        });
+        modalInstance.result.then(function(selectedObject) {
+                delete selectedObject.save;
+                delete selectedObject.id;
+                $scope.users.push(selectedObject);
+                $scope.users = $filter('orderBy')($scope.users, 'badgeid', 'reserve');
+        });
+    };
+
     /* authenticate the 'current user' ?! .. */
     if (!sessionStorage.userToken || sessionStorage.userToken == '') {
         /* var credentials = { username : 'marcvermeir', password : 'azerty' }; */
@@ -79,6 +98,7 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, Data, C
     */
 
     /* NOT YET SUPPORTED
+
     $scope.deleteUser = function(user) {
         // todo: delete user should be a logical delete where the enddate will be set equal to today
         if(confirm("Are you sure to remove the user")){
@@ -106,24 +126,6 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, Data, C
         });
     };
 
-    $scope.create = function (p,size) {
-        var modalInstance = $modal.open({
-          templateUrl: 'partials/usersEdit.html',
-          controller: 'userCreateCtrl',
-          size: size,
-          resolve: {
-            item: function () {
-              return p;
-            }
-          }
-        });
-        modalInstance.result.then(function(selectedObject) {
-                delete selectedObject.save;
-                delete selectedObject.id;
-                $scope.users.push(selectedObject);
-                $scope.users = $filter('orderBy')($scope.users, 'badgeid', 'reserve');
-        });
-    };
     
     $scope.getClass = function(date) {
         return 'info';
@@ -132,6 +134,37 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, Data, C
     };
     */
 });
+
+app.controller('userCreateCtrl', function ($scope, $modalInstance, item, Data) {
+
+    $scope.user = angular.copy(item);
+        
+    $scope.cancel = function () {
+        $modalInstance.dismiss('Close');
+    };
+
+    $scope.title = 'Add User';
+    $scope.buttonText = 'Add New User';
+
+    var original = item;
+    $scope.isClean = function() {
+        return angular.equals(original, $scope.user);
+    }
+
+    $scope.saveUser = function (user) {
+        Data.post('users', user).then(function (result) {
+                    if(result.status != 'error'){
+                        var x = angular.copy(user);
+                        x.save = 'insert';
+                        x.id = result.data;
+                        $modalInstance.close(x);
+                    }else{
+                        console.log(result);
+                    }
+                });
+        };
+});
+
 
 /* NOT YET SUPPORTED
 app.controller('userEditCtrl', function ($scope, $modalInstance, item, Data) {
@@ -161,31 +194,5 @@ app.controller('userEditCtrl', function ($scope, $modalInstance, item, Data) {
         };
 });
 
-app.controller('userCreateCtrl', function ($scope, $modalInstance, item, Data) {
 
-  $scope.user = angular.copy(item);
-        
-        $scope.cancel = function () {
-            $modalInstance.dismiss('Close');
-        };
-        $scope.title = 'Add User';
-        $scope.buttonText = 'Add New User';
-
-        var original = item;
-        $scope.isClean = function() {
-            return angular.equals(original, $scope.user);
-        }
-        $scope.saveUser = function (user) {
-                Data.post('users', user).then(function (result) {
-                    if(result.status != 'error'){
-                        var x = angular.copy(user);
-                        x.save = 'insert';
-                        x.id = result.data;
-                        $modalInstance.close(x);
-                    }else{
-                        console.log(result);
-                    }
-                });
-        };
-});
 */
