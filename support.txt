@@ -1,3 +1,8 @@
+* TOASTR :
+-- http://www.codershood.info/2015/12/10/showing-notification-using-toaster-angularjs/ 
+-- https://github.com/Foxandxss/angular-toastr
+-- https://github.com/Foxandxss/angular-toastr/tree/angular-1.2
+
 * Browser web app refreshes : 
 -- http://tutorials.jenkov.com/angularjs/timeout-interval.html#interval
 

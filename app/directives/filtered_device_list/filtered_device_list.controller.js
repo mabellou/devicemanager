@@ -1,4 +1,4 @@
-app.controller('FilteredDeviceListController', function ($scope, Data, DEVSTATUS, CONFIG) {
+app.controller('FilteredDeviceListController', function ($scope, Data, DEVSTATUS, CONFIG, toastr) {
 
     // console.log($scope.currentuser.profile);
 
@@ -66,7 +66,7 @@ app.controller('FilteredDeviceListController', function ($scope, Data, DEVSTATUS
             Data.post('device/status' + '?token=' + sessionStorage.userToken, returnRequest).then(function(data) {
                 /* update the local 'model' .. */
                 device.statusobject = { status : DEVSTATUS.AVAILABLE, userobject : null };
-
+                toastr.info('Device ' + device.boxid + '   ' + device.brand + ' ' + device.model + ' returned!');
                 /* quid the error(s) ?! .. todo: handle error(s) ?! */
             });
         };
@@ -83,6 +83,7 @@ app.controller('FilteredDeviceListController', function ($scope, Data, DEVSTATUS
             Data.post('device/status' + '?token=' + sessionStorage.userToken, unlockRequest).then(function(data) {
                 /* update the local 'model' .. */
                 device.statusobject = { status : DEVSTATUS.AVAILABLE, userobject : null };
+                toastr.info('Device ' + device.boxid + '   ' + device.brand + ' ' + device.model + ' unlocked!');
 
                 /* quid the error(s) ?! .. todo: handle error(s) ?! */
             });
@@ -100,7 +101,7 @@ app.controller('FilteredDeviceListController', function ($scope, Data, DEVSTATUS
             Data.post('device/status' + '?token=' + sessionStorage.userToken, confirmRequest).then(function(data) {
                 /* update the local 'model' .. */
                 device.statusobject = { status : DEVSTATUS.INUSE, userobject : { fullname : $scope.currentuser.fullname, userid : $scope.currentuser.userid }};
-
+                toastr.info('Device ' + device.boxid + '   ' + device.brand + ' ' + device.model + ' confirmed!');
                 /* quid the error(s) ?! .. todo: handle error(s) ?! */
             });
         };
@@ -117,7 +118,7 @@ app.controller('FilteredDeviceListController', function ($scope, Data, DEVSTATUS
             Data.post('device/status' + '?token=' + sessionStorage.userToken, lockRequest).then(function(data) {
                 /* update the local 'model' .. */
                 device.statusobject = { status : DEVSTATUS.LOCKED, userobject : { fullname : $scope.currentuser.fullname, userid : $scope.currentuser.userid }};
-
+                toastr.info('Device ' + device.boxid + '   ' + device.brand + ' ' + device.model + ' locked!');
                 /* quid the error(s) ?! .. todo: handle error(s) ?! */
             });
         };

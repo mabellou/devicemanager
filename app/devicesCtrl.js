@@ -1,13 +1,16 @@
-app.controller('devicesCtrl', function ($scope, $modal, $filter, $location, $interval, Data, Creds, USRPROFILE, CONFIG) {
+app.controller('devicesCtrl', function ($scope, $modal, $filter, $location, $interval, Data, Creds, USRPROFILE, CONFIG, toastr) {
      
     $scope.currentuser = {};
     $scope.devices = {};
 
     $interval( function(){ $scope.callAtInterval(); }, CONFIG.REFRESHINTERVAL);
 
-    $scope.fetchDevices = function() {
+    $scope.fetchDevices = function(notifyUser) {
         Data.get('devices?token=' + sessionStorage.userToken).then(function(data) { 
             $scope.devices = data;
+
+            if (notifyUser)
+                toastr.success('Devices loaded successfully!');
         });
     };
 
@@ -60,10 +63,12 @@ app.controller('devicesCtrl', function ($scope, $modal, $filter, $location, $int
                     $scope.currentuser = { userid : data.id, fullname : data.fullname, profile : data.profile };
                     sessionStorage.userProfile = $scope.currentuser.profile;
 
+                    toastr.success('User ' + credentials.username + ' authenticated successfully!');
+
                     // Data.get('devices?token=' + sessionStorage.userToken).then(function(data) { 
                     //     $scope.devices = data;
                     // });
-                    $scope.fetchDevices();
+                    $scope.fetchDevices(true)
                     // quid error(s) returned ? 
                 });
                 // quid error(s) returned ?
@@ -78,7 +83,6 @@ app.controller('devicesCtrl', function ($scope, $modal, $filter, $location, $int
         //    $scope.devices = data;
         //});
         $scope.fetchDevices();
-
         // quid error(s) returned ?
     };
 

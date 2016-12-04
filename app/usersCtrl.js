@@ -1,7 +1,16 @@
-app.controller('usersCtrl', function($scope, $modal, $filter, $location, Data, Creds, USRPROFILE) {
+app.controller('usersCtrl', function($scope, $modal, $filter, $location, Data, Creds, USRPROFILE, CONFIG, toastr) {
 
     $scope.currentuser = {};
     $scope.users = [];
+
+    $scope.fetchUsers = function(notifyUser) {
+        Data.get('users?token=' + sessionStorage.userToken).then(function(data) { 
+            $scope.users = data;
+
+            if (notifyUser)
+                toastr.success('Users loaded successfully!');
+        });
+    };
 
     /* authenticate the 'current user' ?! .. */
     if (!sessionStorage.userToken || sessionStorage.userToken == '') {
@@ -25,12 +34,15 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, Data, C
                     $scope.currentuser = { userid: data.id, fullname: data.fullname, profile: data.profile };
                     sessionStorage.userProfile = $scope.currentuser.profile;
 
+                    toastr.success('User ' + credentials.username + ' authenticated successfully!');
+
                     // only Administrators can see the list of users .. 
                     if ($scope.currentuser.profile == USRPROFILE.ADMINISTRATOR) {
                         /* call the (VT) Service to fetch the list of users .. */
-                        Data.get('users?token=' + sessionStorage.userToken).then(function(data) {
-                            $scope.users = data;
-                        });
+                        //Data.get('users?token=' + sessionStorage.userToken).then(function(data) {
+                        //    $scope.users = data;
+                        //});
+                        $scope.fetchUsers(true);
                         // quid error(s) returned ? 
                     }
                 });
@@ -43,9 +55,10 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, Data, C
 
         // only Administrators can see the list of users .. 
         if ($scope.currentuser.profile == USRPROFILE.ADMINISTRATOR) {
-            Data.get('users?token=' + sessionStorage.userToken).then(function(data) {
-                $scope.users = data;
-            });
+            //Data.get('users?token=' + sessionStorage.userToken).then(function(data) {
+            //    $scope.users = data;
+            //});
+            $scope.fetchUsers(true);
             // quid error(s) returned ?
         }
     }

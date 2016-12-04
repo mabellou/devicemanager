@@ -34,6 +34,9 @@
   [FE: OK] list of users only available for administrator
   
 
+?? add ToastR ?! : http://www.codershood.info/2015/12/10/showing-notification-using-toaster-angularjs/
+
+
 ** 
   -- QUID ErrorMessages (= HTTP 200 ?!) returned by BackEnd ??
   -- CRUD operations 4 administrators .. on Devices, on Users, ...
