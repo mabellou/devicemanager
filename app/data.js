@@ -11,7 +11,7 @@ app.factory("Data", ['$http', '$location',
                     return results.data;
                 })
                 .catch(function (results) {
-                    console.log('Error in http get ' + q);
+                    console.log('Error in http get ' + q + ' //' + results.data);
                     return null;
                 });
         };
@@ -24,10 +24,13 @@ app.factory("Data", ['$http', '$location',
 
             return $http.post(serviceBase + q, object)
                 .then(function (results) {
-                    return results.data;
+                    if (results.status == 200)
+                        return results.data || results.status;
+                    else
+                        return null;
                 })
                 .catch(function (results) {
-                    console.log('Error in http post ' + q);
+                    console.log('Error in http post ' + q + ' //' + results.data);
                     return null;
                 });
         };

@@ -26,7 +26,8 @@
                     e.    ‘A’ = admin: must see everything 
 
   [FE : OK]  3.    Max. number of devices per user = 3
-  [FE : ][BE : ]  4.  Max. duration LOCKED per device: 15min .. 
+
+  [FE : ??][BE : ??]  4.  Max. duration LOCKED per device: 15min .. 
                       >> action  : unlock device automatically (by BE ?)
 
                       Max. duration IN USE per device:
@@ -38,11 +39,25 @@
   [FE: OK] list of users only available for administrator
   
 
-?? add ToastR ?! : http://www.codershood.info/2015/12/10/showing-notification-using-toaster-angularjs/
-
 
 ** 
-  -- QUID ErrorMessages (= HTTP 200 ?!) returned by BackEnd ??
+  ** define the API contracts for creating a new and/or updating an existing user :
+    ---- quid the fields of such 'userDTO' ??
+    ---- quid the maximumlength, datatype, required or not ? .. of each user property
+
+    ?? badgeid  string required maxlength=10  minlength=1
+    ?? username string required maxlength=15  minlength=1
+    ?? password string required maxlength=15  minlength=6   hide input?
+    ?? profile  string required maxlength=15  'administrator' || 'tester' || ???
+    ?? fullname string          maxlength=15
+    ?? enddate  data   required greater > today
+
+
+
+
+
+  -- QUID ErrorMessages (= HTTP 200 ?!) returned by BackEnd ?? .. check refactored ErrorMessages returned by BE = Slack message by Marwan
+
   -- CRUD operations 4 administrators .. on Devices, on Users, ...
 
   -- List (devices && users) columns must be aligned
@@ -56,7 +71,7 @@
 
 -- return the device list in function of the user (profile ..)
 -- only the valid user can be authenticated
--- for an admin, also the unavailable device are returned, not for the other
+-- for an admin, also the unavailable device are returned, not for the other users/profiles
 -- list of user only available for administrator
 =======
 >>>>>>> 7c486883c2055bbd9305403787664274a3f53be9
@@ -64,6 +79,10 @@
 
 
 
+** Nice to have :
+
+-- FE : main menu-option Users is only enabled for Users with profile == administrator
+-- delegate the toastr calls into a seperate nodification 'class' : service, facory or provider ?
 
 
 
