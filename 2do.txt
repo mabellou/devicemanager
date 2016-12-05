@@ -81,8 +81,9 @@
 
 ** Nice to have :
 
+-- FE : add new user : property 'enddate' should be greater than today
 -- FE : main menu-option Users is only enabled for Users with profile == administrator
--- delegate the toastr calls into a seperate nodification 'class' : service, facory or provider ?
+-- FE : delegate the toastr calls into a seperate nodification 'class' : service, facory or provider ?
 
 
 

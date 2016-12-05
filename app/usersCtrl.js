@@ -2,6 +2,7 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, Data, C
 
     $scope.currentuser = {};
     $scope.users = [];
+    $scope.user = {};
 
     $scope.fetchUsers = function(notifyUser) {
         Data.get('users?token=' + sessionStorage.userToken).then(function(data) {
@@ -68,8 +69,7 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, Data, C
                             toastr.warning('Technical problem with fetching user ' + sessionStorage.userId);
                     });
                 }
-            }
-            else
+            } else
                 toastr.warning('Technical problem with authenticating user ' + credentials.username);
         });
     } else {
@@ -138,6 +138,9 @@ app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, to
 
     $scope.user = angular.copy(item);
 
+    var today = new Date();
+    $scope.date = today.toISOString();
+
     $scope.cancel = function() {
         $modalInstance.dismiss('Close');
     };
@@ -151,17 +154,20 @@ app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, to
     }
 
     $scope.saveUser = function(user) {
-        alert(user);
-        
+
         Data.post('users', user).then(function(result) {
-            if (result.status != 'error') {
-                var x = angular.copy(user);
-                x.save = 'insert';
-                x.id = result.data;
-                $modalInstance.close(x);
-            } else {
-                console.log(result);
+            if (result) {
+                if (result.status != 'error') {
+                    var x = angular.copy(user);
+                    // x.save = 'insert';
+                    x.id = result.data;
+                    $modalInstance.close(x);
+                } else {
+                    console.log(result);
+                }
             }
+            else
+            {}
         });
     };
 });
