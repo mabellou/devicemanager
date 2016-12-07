@@ -134,12 +134,17 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, Data, C
     */
 });
 
-app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, toastr) {
+app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, USRPROFILE, toastr) {
 
     $scope.user = angular.copy(item);
 
     var today = new Date();
     $scope.date = today.toISOString();
+
+    $scope.availableProfiles = [
+      {id: USRPROFILE.ADMINISTRATOR, name: USRPROFILE.ADMINISTRATOR},
+      {id: USRPROFILE.TESTER, name: USRPROFILE.TESTER}
+    ];
 
     $scope.cancel = function() {
         $modalInstance.dismiss('Close');
@@ -155,19 +160,22 @@ app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, to
 
     $scope.saveUser = function(user) {
 
-        Data.post('users', user).then(function(result) {
+        Data.post('user', user).then(function(result) {
             if (result) {
+                //todo: check from here ..
                 if (result.status != 'error') {
                     var x = angular.copy(user);
+                    
                     // x.save = 'insert';
                     x.id = result.data;
+
                     $modalInstance.close(x);
                 } else {
                     console.log(result);
                 }
             }
             else
-            {}
+                toastr.warning('Technical problem with "creating" new user ' + user.username);
         });
     };
 });

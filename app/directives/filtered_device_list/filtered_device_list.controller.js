@@ -45,7 +45,7 @@ app.controller('FilteredDeviceListController', function($scope, Data, DEVSTATUS,
     };
 
     $scope.getClass = function() {
-        return 'info'
+        return 'info';
     };
 
     $scope.formatStatus = function(status) {
@@ -96,6 +96,7 @@ app.controller('FilteredDeviceListController', function($scope, Data, DEVSTATUS,
 
         if (device && device.statusobject && device.statusobject.status == DEVSTATUS.LOCKED) {
 
+            // alert($scope.currentuser.userid);
             var confirmRequest = { id: device.id, statusobject: { status: DEVSTATUS.INUSE, userobject: { userid: $scope.currentuser.userid } } };
 
             /* call the (VT) service to CONFIRM the concerned device .. */
@@ -114,6 +115,7 @@ app.controller('FilteredDeviceListController', function($scope, Data, DEVSTATUS,
 
         if (device && device.statusobject && device.statusobject.status == DEVSTATUS.AVAILABLE) {
 
+            // alert($scope.currentuser.userid);
             var lockRequest = { id: device.id, statusobject: { status: DEVSTATUS.LOCKED, userobject: { userid: $scope.currentuser.userid } } };
 
             /* call the (VT) service to LOCK the concerned device .. */
