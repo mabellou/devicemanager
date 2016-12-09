@@ -1,20 +1,27 @@
-app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $interval, Data, Creds, USRPROFILE, CONFIG, toastr) {
+app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $interval, Data, Creds, USRPROFILE, CONFIG, ENVIRONMENT, toastr) {
 
     $scope.currentuser = {};
     $scope.devices = {};
 
     //TODO: $interval( function(){ $scope.callAtInterval(); }, CONFIG.REFRESHINTERVAL);
 
+    $scope.getErrorMsg = function(dataError) {
+        if (dataError) {
+            return (ENVIRONMENT.DEBUG ? '   [' + dataError.text + ' - ' + dataError.code + ']' : '');
+        }
+    };
+
     $scope.fetchDevices = function(notifyUser) {
         Data.get('devices?token=' + sessionStorage.userToken).then(function(data) {
-            if (data) {
+            if (!data.error) {
                 $scope.devices = data;
                 if (notifyUser)
                     toastr.success('Devices were loaded successfully!');
             } else
-            if (notifyUser)
-                toastr.warning('Technical problem in fetching devices!');
-        });
+            if (notifyUser) {
+                toastr.warning('Technical problem in fetching devices!' + $scope.getErrorMsg(data.error));
+            }
+        }); 
     };
 
     $scope.callAtInterval = function() {
@@ -51,7 +58,7 @@ app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $inte
         }
 
         Data.post('authenticate', credentials).then(function(data) {
-            if (data) {
+            if (!data.error) {
                 sessionStorage.userToken = data.token;
                 sessionStorage.userId = data.userid;
 
@@ -61,25 +68,30 @@ app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $inte
                 } else {
                     /* call the (VT) Service to fetch the 'current user' info .. */
                     Data.get('user/' + sessionStorage.userId + '?token=' + sessionStorage.userToken).then(function(data) {
-                        if (data) {
+                        if (!data.error) {
                             /* capture the user data into a $scope.currentuser object .. */
                             $scope.currentuser = { userid: data.id, fullname: data.fullname, profile: data.profile };
+                            
                             sessionStorage.userProfile = $scope.currentuser.profile;
+                            sessionStorage.fullName = $scope.currentuser.fullname;
 
                             toastr.success('User ' + credentials.username + ' authenticated successfully!');
 
                             $scope.fetchDevices(true);
+
+                        } else {
+                            toastr.warning('Technical problem with fetching user ' + sessionStorage.userId + $scope.getErrorMsg(data.error));
+                            $location.path('/login');
                         }
-                        else
-                            toastr.warning('Technical problem with fetching user ' + sessionStorage.userId);
                     });
                 }
-            } else
-                toastr.warning('Technical problem with authenticating user ' + credentials.username);
+            } else {
+                toastr.warning('Technical problem with authenticating user ' + credentials.username + $scope.getErrorMsg(data.error));
+                $location.path('/login');
+            }
         });
-        // quid error(s) returned ?
     } else {
-        $scope.currentuser = { profile: sessionStorage.userProfile };
+        $scope.currentuser = { userid: parseInt(sessionStorage.userId), fullname: sessionStorage.fullName, profile: sessionStorage.userProfile };
 
         $scope.fetchDevices();
     };

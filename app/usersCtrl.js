@@ -6,7 +6,7 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, Data, C
 
     $scope.fetchUsers = function(notifyUser) {
         Data.get('users?token=' + sessionStorage.userToken).then(function(data) {
-            if (data) {
+            if (!data.error) {
                 $scope.users = data;
                 if (notifyUser)
                     toastr.success('Users were loaded successfully!');
@@ -44,7 +44,7 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, Data, C
         }
 
         Data.post('authenticate', credentials).then(function(data) {
-            if (data) {
+            if (!data.error) {
                 sessionStorage.userToken = data.token;
                 sessionStorage.userId = data.userid;
 
@@ -54,7 +54,7 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, Data, C
                 } else {
                     /* call the (VT) Service to fetch the 'current user' info .. */
                     Data.get('user/' + sessionStorage.userId + '?token=' + sessionStorage.userToken).then(function(data) {
-                        if (data) {
+                        if (!data.error) {
                             // capture the user data into a $scope.currentuser object ..
                             $scope.currentuser = { userid: data.id, fullname: data.fullname, profile: data.profile };
                             sessionStorage.userProfile = $scope.currentuser.profile;
@@ -65,12 +65,16 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, Data, C
                             if ($scope.currentuser.profile == USRPROFILE.ADMINISTRATOR) {
                                 $scope.fetchUsers(true);
                             }
-                        } else
+                        } else {
                             toastr.warning('Technical problem with fetching user ' + sessionStorage.userId);
+                            $location.path('/login');
+                        }
                     });
                 }
-            } else
+            } else {
                 toastr.warning('Technical problem with authenticating user ' + credentials.username);
+                $location.path('/login');
+            }
         });
     } else {
         $scope.currentuser = { profile: sessionStorage.userProfile };
@@ -143,7 +147,10 @@ app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, US
 
     $scope.availableProfiles = [
       {id: USRPROFILE.ADMINISTRATOR, name: USRPROFILE.ADMINISTRATOR},
-      {id: USRPROFILE.TESTER, name: USRPROFILE.TESTER}
+      {id: USRPROFILE.TESTER, name: USRPROFILE.TESTER},
+      {id: USRPROFILE.INCUBATOR, name: USRPROFILE.INCUBATOR},   
+      {id: USRPROFILE.SAVI, name: USRPROFILE.SAVI},
+      {id: USRPROFILE.BUSINESS, name: USRPROFILE.BUSINESS},
     ];
 
     $scope.cancel = function() {
@@ -160,7 +167,7 @@ app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, US
 
     $scope.saveUser = function(user) {
 
-        Data.post('user', user).then(function(result) {
+        Data.put('user', user).then(function(result) {
             if (result) {
                 //todo: check from here ..
                 if (result.status != 'error') {
