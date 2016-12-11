@@ -10,7 +10,6 @@
     <col style="width:5%">
     <col style="width:20%">
     <col style="width:20%">
-    
     <tr ng-show="devices.length==0">
         <td style="vertical-align:middle; "><i class="fa fa-ban fa-3x "></i>&nbsp;No data found</td>
     </tr>
@@ -105,30 +104,31 @@
         <td>{{c.osversion}}</td>
         <td>{{c.screensize}}</td>
         <td>
-            <i class="fa fa-mobile fa-2x" aria-hidden="true" title="{{c.type}}" ng-if="c.type=='smartphone'"></i>
-            <i class="fa fa-tablet fa-2x" aria-hidden="true" title="{{c.type}}" ng-if="c.type=='tablet'"></i>
+            <i class="fa fa-mobile fa-2x" aria-hidden="true" title="{{c.type}}" ng-if="isSmartphone(c)"></i>
+            <i class="fa fa-tablet fa-2x" aria-hidden="true" title="{{c.type}}" ng-if="isTablet(c)"></i>
         </td>
         <td>
             <button class="btn btn-devicestatus" ng-class="{available:'btn-success', inuse:'btn-danger', locked:'btn-info'}[c.statusobject.status]">{{formatStatus(c.statusobject.status)}}</button>
         </td>
         <td>{{c.statusobject.userobject.fullname}}</td>
         <td style="width:200px">
-            <div ng-if="currentuser.profile!='administrator'">
+            <div ng-if="isAdministrator()==false">
                 <!-- My Devices I'm USING could be RETURNed : -->
-                <button type="button" class="btn btn-primary btn-sm" ng-show="filteredStatus=='inuse' && c.statusobject.status=='inuse'" ng-click="returnDevice(c);">Return</button>
+                <button type="button" class="btn btn-primary btn-sm" ng-show="isInUse(filteredStatus) && isInUse(c.statusobject.status)" ng-click="returnDevice(c);">Return</button>
                 <!-- My Devices I LOCKED could be UNLOCKed or CONFIRMed : -->
-                <div class="btn-group" ng-show="filteredStatus=='locked' && c.statusobject.status=='locked'">
+                <div class="btn-group" ng-show="isLocked(filteredStatus) && isLocked(c.statusobject.status)">
                     <button type="button" class="btn btn-default btn-sm" ng-click="unlockDevice(c);">Unlock</button>
                     <button type="button" class="btn btn-primary btn-sm" ng-click="confirmDevice(c);">Confirm</button>
                 </div>
-                <div ng-show="filteredStatus==null && c.statusobject.status=='available'">
+                <!-- All other devices .. -->
+                <div ng-show="filteredStatus==null && isAvailable(c.statusobject.status)">
                     <button type="button" class="btn btn-primary btn-sm" ng-disabled="lockDisabled()" ng-click="lockDevice(c);">Lock</button>
                 </div>
-                <!-- As Administrator I can EDIT or DELETE a device : -->
-                <div class="btn-group" ng-show="currentuser.profile=='administrator'">
-                    <button type="button" class="btn btn-default fa fa-edit" ng-click="open(c);"></button>
-                    <button type="button" class="btn btn-danger fa fa-trash-o" ng-click="deleteDevice(c);"></button>
-                </div>
+            </div>
+            <!-- As Administrator I can EDIT or DELETE a device : -->
+            <div class="btn-group" ng-show="isAdministrator()">
+                <button type="button" class="btn btn-default fa fa-edit" ng-click="open(c);"></button>
+                <button type="button" class="btn btn-danger fa fa-trash-o" ng-click="deleteDevice(c);"></button>
             </div>
         </td>
     </tr>

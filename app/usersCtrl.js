@@ -4,7 +4,8 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
     $scope.users = [];
     $scope.user = {};
 
-    $interval( function(){ $scope.callAtInterval(); }, CONFIG.REFRESHINTERVAL);
+    //TODO: $interval(function() { $scope.callAtInterval(); }, CONFIG.REFRESHINTERVAL);
+
     $scope.callAtInterval = function() {
         $scope.fetchUsers();
     };
@@ -13,6 +14,7 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
         return ENVIRONMENT.DEBUG || $scope.currentuser.profile == USRPROFILE.ADMINISTRATOR;
     };
 
+    //todo: getErrorMsg() should become a common function, reuseable in multiple controlleers ..
     $scope.getErrorMsg = function(dataError) {
         if (dataError) {
             return (ENVIRONMENT.DEBUG ? '   [' + dataError.text + ' - ' + dataError.code + ']' : '');
@@ -46,10 +48,33 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
             if (selectedObject) {
                 delete selectedObject.save;
                 $scope.users.push(selectedObject);
-                //todo: check this .. $scope.users = $filter('orderBy')($scope.users, 'badgeid', 'reserve');
+                $scope.users = $filter('orderBy')($scope.users, 'badgeid', 'reverse');
             }
         });
     };
+
+    $scope.open = function (p,size) {
+        var modalInstance = $modal.open({
+          templateUrl: 'partials/usersEdit.html',
+          controller: 'userEditCtrl',
+          size: size,
+          resolve: {
+            item: function () {
+              return p;
+            }
+          }
+        });
+        modalInstance.result.then(function(selectedObject) {
+            if (selectedObject) {
+            
+                //todo: complete the following with all edited user properties ..
+                p.badgeid = selectedObject.badgeid;
+                p.name = selectedObject.name;
+                p.lastlogged = selectedObject.lastlogged;
+            }
+        });
+    };
+
 
     /* authenticate the 'current user' ?! .. */
     if (!sessionStorage.userToken || sessionStorage.userToken == '') {
@@ -113,11 +138,7 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
         { text: "Action", predicate: "", sortable: false }
     ];
 
-    /* ???
-    $scope.isAdministrator = function() {
-        return ($scope.currentuser.profile == USRPROFILE.ADMINISTRATOR)
-    };
-    */
+
 
     /* NOT YET SUPPORTED
 
@@ -128,24 +149,6 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
                 $scope.users = _.without($scope.users, _.findWhere($scope.users, {badgeid:user.badgeid}));
             });
         }
-    };
-
-    $scope.open = function (p,size) {
-        var modalInstance = $modal.open({
-          templateUrl: 'partials/usersEdit.html',
-          controller: 'userEditCtrl',
-          size: size,
-          resolve: {
-            item: function () {
-              return p;
-            }
-          }
-        });
-        modalInstance.result.then(function(selectedObject) {
-                p.badgeid = selectedObject.badgeid;
-                p.name = selectedObject.name;
-                p.lastlogged = selectedObject.lastlogged;
-        });
     };
 
     
@@ -172,7 +175,7 @@ app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, US
         { id: USRPROFILE.BUSINESS, name: USRPROFILE.BUSINESS },
     ];
 
-    //todo: getErrorMsg() should become a common function, reused in controllzers ..
+    //todo: getErrorMsg() should become a common function, reuseable in multiple controlleers ..
     $scope.getErrorMsg = function(dataError) {
         if (dataError) {
             return (ENVIRONMENT.DEBUG ? '   [' + dataError.text + ' - ' + dataError.code + ']' : '');
@@ -206,6 +209,7 @@ app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, US
                 $modalInstance.close(null);
             } else {
                 var u = angular.copy(user);
+
                 u.fullname = u.firstname + ' ' + u.lastname;
 
                 u.save = 'insert';
@@ -217,27 +221,43 @@ app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, US
     };
 });
 
+app.controller('userEditCtrl', function ($scope, $modalInstance, item, Data, USRPROFILE) {
 
-/* NOT YET SUPPORTED
-app.controller('userEditCtrl', function ($scope, $modalInstance, item, Data) {
+    $scope.user = angular.copy(item);
+    //TODO: check why user.profile is not selected automatically in dropdownlist ?!
+    //TODO: check format user.enddate is OK ?!
 
-  $scope.user = angular.copy(item);
+    $scope.availableProfiles = [
+        { id: USRPROFILE.ADMINISTRATOR, name: USRPROFILE.ADMINISTRATOR },
+        { id: USRPROFILE.TESTER, name: USRPROFILE.TESTER },
+        { id: USRPROFILE.INCUBATOR, name: USRPROFILE.INCUBATOR },
+        { id: USRPROFILE.SAVI, name: USRPROFILE.SAVI },
+        { id: USRPROFILE.BUSINESS, name: USRPROFILE.BUSINESS },
+    ];
         
-        $scope.cancel = function () {
-            $modalInstance.dismiss('Close');
-        };
-        $scope.title = 'Edit User' ;
-        $scope.buttonText = 'Update User';
+    $scope.cancel = function () {
+        $modalInstance.dismiss('Close');
+    };
 
-        var original = item;
-        $scope.isClean = function() {
-            return angular.equals(original, $scope.user);
-        }
-        $scope.saveUser = function (user) {
-                Data.put('users/'+user.badgeid, user).then(function (result) {
+    $scope.title = 'Edit User' ;
+    $scope.buttonText = 'Update User';
+
+    var original = item;
+    $scope.isClean = function() {
+        return angular.equals(original, $scope.user);
+    }
+    
+    $scope.saveUser = function (user) {
+        //TODO: check if updating an existing user is a PUT or POST request ?!
+        //TODO: /user of /users ?
+
+        Data.put('users/'+user.badgeid, user).then(function (result) {
+            //TODO: complete the following ..
+            
                     if(result.status != 'error'){
                         var x = angular.copy(user);
                         x.save = 'update';
+
                         $modalInstance.close(x);
                     }else{
                         console.log(result);
@@ -245,6 +265,3 @@ app.controller('userEditCtrl', function ($scope, $modalInstance, item, Data) {
                 });
         };
 });
-
-
-*/

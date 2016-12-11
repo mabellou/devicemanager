@@ -8,12 +8,17 @@ app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $inte
         $scope.fetchDevices();
     };
 
+    //todo: getErrorMsg() should become a common function, reuseable in multiple controlleers ..
     $scope.getErrorMsg = function(dataError) {
         if (dataError) {
             return (ENVIRONMENT.DEBUG ? '   [' + dataError.text + ' - ' + dataError.code + ']' : '');
         }
     };
 
+    $scope.isAdministrator = function() {
+        return ENVIRONMENT.DEBUG || $scope.currentuser.profile == USRPROFILE.ADMINISTRATOR;
+    };
+    
     $scope.fetchDevices = function(notifyUser) {
         Data.get('devices?token=' + sessionStorage.userToken).then(function(data) {
             if (!data.error) {

@@ -1,6 +1,4 @@
-app.controller('FilteredDeviceListController', function($scope, Data, DEVSTATUS, CONFIG, toastr) {
-
-    // console.log($scope.currentuser.profile);
+app.controller('FilteredDeviceListController', function($scope, Data, DEVSTATUS, CONFIG, USRPROFILE, ENVIRONMENT, DEVTYPE, toastr) {
 
     $scope.columns = [
         { text: "Box ID", predicate: "boxid", sortable: true, dataType: "number" },
@@ -16,6 +14,30 @@ app.controller('FilteredDeviceListController', function($scope, Data, DEVSTATUS,
     ];
 
     $scope.filters = {};
+
+    $scope.isAdministrator = function() {
+        return $scope.currentuser.profile == USRPROFILE.ADMINISTRATOR;
+    };
+
+    $scope.isSmartphone = function(device) {
+        return device.type == DEVTYPE.SMARTPHONE;
+    };
+
+    $scope.isTablet = function(device) {
+        return device.type == DEVTYPE.TABLET;
+    };
+
+    $scope.isInUse = function(status) {
+        return status == DEVSTATUS.INUSE;
+    };
+
+    $scope.isAvailable = function(status) {
+        return status == DEVSTATUS.AVAILABLE;
+    };
+
+    $scope.isLocked = function(status) {
+        return status == DEVSTATUS.LOCKED;
+    };
 
     $scope.countDevices4CurrentUser = function() {
         var count = 0;
