@@ -1,8 +1,23 @@
-app.controller('usersCtrl', function($scope, $modal, $filter, $location, Data, Creds, USRPROFILE, CONFIG, toastr) {
+app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interval, Data, Creds, USRPROFILE, CONFIG, ENVIRONMENT, toastr) {
 
     $scope.currentuser = {};
     $scope.users = [];
     $scope.user = {};
+
+    $interval( function(){ $scope.callAtInterval(); }, CONFIG.REFRESHINTERVAL);
+    $scope.callAtInterval = function() {
+        $scope.fetchUsers();
+    };
+
+    $scope.isAdministrator = function() {
+        return ENVIRONMENT.DEBUG || $scope.currentuser.profile == USRPROFILE.ADMINISTRATOR;
+    };
+
+    $scope.getErrorMsg = function(dataError) {
+        if (dataError) {
+            return (ENVIRONMENT.DEBUG ? '   [' + dataError.text + ' - ' + dataError.code + ']' : '');
+        }
+    };
 
     $scope.fetchUsers = function(notifyUser) {
         Data.get('users?token=' + sessionStorage.userToken).then(function(data) {
@@ -12,7 +27,7 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, Data, C
                     toastr.success('Users were loaded successfully!');
             } else
             if (notifyUser)
-                toastr.warning('Technical problem with fetching users!');
+                toastr.warning('Technical problem with fetching users!' + $scope.getErrorMsg(data.error));
         });
     };
 
@@ -28,10 +43,11 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, Data, C
             }
         });
         modalInstance.result.then(function(selectedObject) {
-            delete selectedObject.save;
-            delete selectedObject.id;
-            $scope.users.push(selectedObject);
-            $scope.users = $filter('orderBy')($scope.users, 'badgeid', 'reserve');
+            if (selectedObject) {
+                delete selectedObject.save;
+                $scope.users.push(selectedObject);
+                //todo: check this .. $scope.users = $filter('orderBy')($scope.users, 'badgeid', 'reserve');
+            }
         });
     };
 
@@ -57,30 +73,33 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, Data, C
                         if (!data.error) {
                             // capture the user data into a $scope.currentuser object ..
                             $scope.currentuser = { userid: data.id, fullname: data.fullname, profile: data.profile };
+
                             sessionStorage.userProfile = $scope.currentuser.profile;
+                            sessionStorage.fullName = $scope.currentuser.fullname;
 
                             toastr.success('User ' + credentials.username + ' authenticated successfully!');
 
                             // only Administrators can see the list of users .. 
-                            if ($scope.currentuser.profile == USRPROFILE.ADMINISTRATOR) {
+                            if (ENVIRONMENT.DEBUG || $scope.currentuser.profile == USRPROFILE.ADMINISTRATOR) {
                                 $scope.fetchUsers(true);
                             }
                         } else {
-                            toastr.warning('Technical problem with fetching user ' + sessionStorage.userId);
+                            toastr.warning('Technical problem with fetching user ' + sessionStorage.userId + $scope.getErrorMsg(data.error));
                             $location.path('/login');
                         }
                     });
                 }
             } else {
-                toastr.warning('Technical problem with authenticating user ' + credentials.username);
+                +$scope.getErrorMsg(data.error)
+                toastr.warning('Technical problem with authenticating user ' + credentials.username + $scope.getErrorMsg(data.error));
                 $location.path('/login');
             }
         });
     } else {
-        $scope.currentuser = { profile: sessionStorage.userProfile };
+        $scope.currentuser = { userid: parseInt(sessionStorage.userId), fullname: sessionStorage.fullName, profile: sessionStorage.userProfile };
 
         // only Administrators can see the list of users .. 
-        if ($scope.currentuser.profile == USRPROFILE.ADMINISTRATOR) {
+        if (ENVIRONMENT.DEBUG || $scope.currentuser.profile == USRPROFILE.ADMINISTRATOR) {
             $scope.fetchUsers(true);
         }
     }
@@ -138,7 +157,7 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, Data, C
     */
 });
 
-app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, USRPROFILE, toastr) {
+app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, USRPROFILE, ENVIRONMENT, toastr) {
 
     $scope.user = angular.copy(item);
 
@@ -146,12 +165,19 @@ app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, US
     $scope.date = today.toISOString();
 
     $scope.availableProfiles = [
-      {id: USRPROFILE.ADMINISTRATOR, name: USRPROFILE.ADMINISTRATOR},
-      {id: USRPROFILE.TESTER, name: USRPROFILE.TESTER},
-      {id: USRPROFILE.INCUBATOR, name: USRPROFILE.INCUBATOR},   
-      {id: USRPROFILE.SAVI, name: USRPROFILE.SAVI},
-      {id: USRPROFILE.BUSINESS, name: USRPROFILE.BUSINESS},
+        { id: USRPROFILE.ADMINISTRATOR, name: USRPROFILE.ADMINISTRATOR },
+        { id: USRPROFILE.TESTER, name: USRPROFILE.TESTER },
+        { id: USRPROFILE.INCUBATOR, name: USRPROFILE.INCUBATOR },
+        { id: USRPROFILE.SAVI, name: USRPROFILE.SAVI },
+        { id: USRPROFILE.BUSINESS, name: USRPROFILE.BUSINESS },
     ];
+
+    //todo: getErrorMsg() should become a common function, reused in controllzers ..
+    $scope.getErrorMsg = function(dataError) {
+        if (dataError) {
+            return (ENVIRONMENT.DEBUG ? '   [' + dataError.text + ' - ' + dataError.code + ']' : '');
+        }
+    };
 
     $scope.cancel = function() {
         $modalInstance.dismiss('Close');
@@ -167,22 +193,26 @@ app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, US
 
     $scope.saveUser = function(user) {
 
-        Data.put('user', user).then(function(result) {
-            if (result) {
-                //todo: check from here ..
-                if (result.status != 'error') {
-                    var x = angular.copy(user);
-                    
-                    // x.save = 'insert';
-                    x.id = result.data;
+        // user.enddate is passed as yyyy-MM-dd but should become dd/MM/yyyy :
+        if (user.enddate) {
+            var dt = user.enddate.substr(8, 2) + '/' + user.enddate.substr(5, 2) + '/' + user.enddate.substr(0, 4);
+            user.enddate = dt;
+        }
 
-                    $modalInstance.close(x);
-                } else {
-                    console.log(result);
-                }
+        Data.post('user?token=' + sessionStorage.userToken, user).then(function(result) {
+
+            if (result.error) {
+                toastr.warning('Technical problem with "creating" new user ' + user.username + $scope.getErrorMsg(result.error));
+                $modalInstance.close(null);
+            } else {
+                var u = angular.copy(user);
+                u.fullname = u.firstname + ' ' + u.lastname;
+
+                u.save = 'insert';
+                u.id = parseInt(result.data);
+
+                $modalInstance.close(u);
             }
-            else
-                toastr.warning('Technical problem with "creating" new user ' + user.username);
         });
     };
 });

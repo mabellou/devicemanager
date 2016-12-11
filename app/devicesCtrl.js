@@ -4,6 +4,9 @@ app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $inte
     $scope.devices = {};
 
     //TODO: $interval( function(){ $scope.callAtInterval(); }, CONFIG.REFRESHINTERVAL);
+    $scope.callAtInterval = function() {
+        $scope.fetchDevices();
+    };
 
     $scope.getErrorMsg = function(dataError) {
         if (dataError) {
@@ -24,10 +27,7 @@ app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $inte
         }); 
     };
 
-    $scope.callAtInterval = function() {
-        $scope.fetchDevices();
-    };
-
+   
     /*
     $scope.create = function (p,size) {
         var modalInstance = $modal.open({

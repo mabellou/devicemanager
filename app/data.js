@@ -18,11 +18,12 @@ app.factory("Data", ['$http', '$location',
 
         obj.post = function (q, object) {
             // authentication should be done via the public service operation
+            var serviceUrl = serviceBase + q;
             if (q == 'authenticate') {
-                serviceBase = serviceBase.replace('/private', '');   
+                serviceUrl = serviceUrl.replace('/private', '');   
             }
 
-            return $http.post(serviceBase + q, object)
+            return $http.post(serviceUrl, object)
                 .then(function (results) {
                     if (results.status == 200)
                         return results.data || results.status;

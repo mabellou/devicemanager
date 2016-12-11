@@ -22,21 +22,18 @@
             <input type="password" class="form-control" name="password" placeholder="enter password" ng-model="user.password" ng-maxlength="15" ng-minlength="6" maxlength="15" required />
         </form-element>
         <form-element label="Profile" mod="user">
-            <!--
-            <input type="text" name="profile" class="form-control" placeholder="enter profile" ng-model="user.profile" ng-maxlength="15" maxlength="15" required />
-            -->
             <select name="profile" class="form-control" placeholder="enter profile" ng-model="user.profile">
                 <option ng-repeat="option in availableProfiles" value="{{option.id}}">{{option.name}}</option>
             </select>
         </form-element>        
         <form-element label="Firstname" mod="user">
-            <input type="text" name="firstname" class="form-control" placeholder="enter firstname" ng-model="user.firstname" ng-maxlength="20" maxlength="20" />
+            <input type="text" name="firstname" class="form-control" placeholder="enter firstname" ng-model="user.firstname" ng-maxlength="20" maxlength="20" required />
         </form-element>
          <form-element label="Lastname" mod="user">
-            <input type="text" name="lastname" class="form-control" placeholder="enter lastname" ng-model="user.lastname" ng-maxlength="20" maxlength="20" />
+            <input type="text" name="lastname" class="form-control" placeholder="enter lastname" ng-model="user.lastname" ng-maxlength="20" maxlength="20" required />
         </form-element>
         <form-element label="Active until" mod="user">
-            <input type="date" name="enddate" class="form-control" placeholder="enter date : active until" ng-model="user.enddate" min="{{date | date:'yyyy-MM-dd'}}" required />
+            <input type="date" name="enddate" class="form-control" placeholder="enter date : active until" ng-model="user.enddate" min="{{date | date:'yyyy-MM-dd'}}" />
          
             <span ng-show="user_form.enddate.$error.min">End Date should not be less than current date</span>
         </form-element>

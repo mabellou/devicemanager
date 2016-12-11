@@ -1,6 +1,6 @@
 <!-- <h4 class="blog-post-title">Users</h4> -->
 <hr/>
-<button type="button" class="btn btn-danger fa fa-plus" style="margin:0 0 5px 0;" ng-click="create(user);" ng-if="currentuser.profile=='administrator'">&nbsp;Add New User</button>
+<button type="button" class="btn btn-danger fa fa-plus" style="margin:0 0 5px 0;" ng-click="create(user);" ng-if="isAdministrator()">&nbsp;Add New User</button>
 <div class="table-responsive">
     <div class="panel panel-primary">
         <div class="panel-heading">List of users
@@ -28,11 +28,11 @@
                     <td>{{c.badgeid}}</td>
                     <td>{{c.fullname}}</td>
                     <td>{{c.profile}}</td>
-                    <td>{{c.enddate}}</td>
+                    <td>{{c.enddate.substr(0, 10)}}</td>
                     <td>{{c.counterlocked}}</td>
                     <td>{{c.counterinuse}}</td>
                     <td style="width:100px">
-                        <div class="btn-group" ng-if="currentuser.profile=='administrator'">
+                        <div class="btn-group" ng-if="isAdministrator()">
                             <button type="button" class="btn btn-default fa fa-edit" ng-click="open(c);"></button>
                             <button type="button" class="btn btn-danger fa fa-trash-o" ng-click="deleteUser(c);"></button>
                         </div>
