@@ -92,6 +92,7 @@ app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $inte
                 }
             } else {
                 toastr.warning('Technical problem with authenticating user ' + credentials.username + $scope.getErrorMsg(data.error));
+                Creds.setCredentials('', '');
                 $location.path('/login');
             }
         });

@@ -1,3 +1,7 @@
+
+* Simple Modal Dialog ?! :
+-- https://www.codeproject.com/Articles/992699/An-Advanced-and-Easy-use-AngularJS-Modal-Dialog
+
 * TOASTR :
 -- http://www.codershood.info/2015/12/10/showing-notification-using-toaster-angularjs/ 
 -- https://github.com/Foxandxss/angular-toastr

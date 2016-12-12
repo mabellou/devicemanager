@@ -4,13 +4,13 @@
         <div class="panel-heading">Login</div>
         <div class="panel-body">
             <table class="table">
-                <form>
+                <form name="login_form" class="form-horizontal" role="form" novalidate>
                     <tr>
                         <td>
                             <label>Username</label>
                         </td>
                         <td>
-                            <input type="text" ng-model="username" class="ng-pristine ng-valid">
+                            <input type="text" ng-model="username" class="ng-pristine ng-valid" ng-maxlength="20" maxlength="20" required placeholder="enter username" />
                         </td>
                     </tr>
                     <tr>
@@ -18,7 +18,7 @@
                             <label>Password</label>
                         </td>
                         <td>
-                            <input type="password" ng-model="password" class="ng-pristine ng-valid">
+                            <input type="password" ng-model="password" class="ng-pristine ng-valid" ng-maxlength="20" maxlength="20" required placeholder="enter password" />
                         </td>
                     </tr>
                     <tr>
@@ -30,7 +30,8 @@
                         <td>
                         </td>
                         <td>
-                            <button class="btn btn-primary" type="button" ng-click="login(username, password)">Login</button>
+                            <button class="btn btn-primary" type="button" ng-disabled="login_form.$invalid" ng-click="login(username, password)" type="submit">Login</button>
+
                             <!-- <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button> -->
                         </td>
                     </tr>

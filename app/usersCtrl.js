@@ -33,6 +33,19 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
         });
     };
 
+    $scope.deleteUser = function(user) {
+        // todo: delete user should be a logical delete where the enddate will be set equal to today
+
+        if(confirm('Are you sure to remove the user ' + user.firstname + ' ' + user.lastname + ' ?')) {
+            Data.delete('user/' + user.id + '?token=' + sessionStorage.userToken)
+            .then(function(result) {
+
+                //todo: check/adapt the following ?! ..
+                $scope.users = _.without($scope.users, _.findWhere($scope.users, {id: user.id}));
+            });
+        };
+    };
+
     $scope.create = function(p, size) {
         var modalInstance = $modal.open({
             templateUrl: 'partials/usersEdit.html',
@@ -67,14 +80,16 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
         modalInstance.result.then(function(selectedObject) {
             if (selectedObject) {
 
-                //todo: complete the following with all edited user properties ..
+                //todo: check the following ?! :
                 p.badgeid = selectedObject.badgeid;
-                p.name = selectedObject.name;
-                p.lastlogged = selectedObject.lastlogged;
+                p.username = selectedObject.username;
+                p.firstname = selectedObject.firstname;
+                p.lastname = selectedObject.lastname;
+                p.profile = selectedObject.profile;
+                p.enddate = selectedObject.enddate;
             }
         });
     };
-
 
     /* authenticate the 'current user' ?! .. */
     if (!sessionStorage.userToken || sessionStorage.userToken == '') {
@@ -138,20 +153,7 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
         { text: "Action", predicate: "", sortable: false }
     ];
 
-
-
     /* NOT YET SUPPORTED
-
-    $scope.deleteUser = function(user) {
-        // todo: delete user should be a logical delete where the enddate will be set equal to today
-        if(confirm("Are you sure to remove the user")){
-            Data.delete("users/"+user.badgeid).then(function(result){
-                $scope.users = _.without($scope.users, _.findWhere($scope.users, {badgeid:user.badgeid}));
-            });
-        }
-    };
-
-    
     $scope.getClass = function(date) {
         return 'info';
         // todo: class value should be 'danger' if date (dd/mm/yyyy) < currentdate, otherwise return 'info'
