@@ -53,20 +53,20 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
         });
     };
 
-    $scope.open = function (p,size) {
+    $scope.open = function(p, size) {
         var modalInstance = $modal.open({
-          templateUrl: 'partials/usersEdit.html',
-          controller: 'userEditCtrl',
-          size: size,
-          resolve: {
-            item: function () {
-              return p;
+            templateUrl: 'partials/usersEdit.html',
+            controller: 'userEditCtrl',
+            size: size,
+            resolve: {
+                item: function() {
+                    return p;
+                }
             }
-          }
         });
         modalInstance.result.then(function(selectedObject) {
             if (selectedObject) {
-            
+
                 //todo: complete the following with all edited user properties ..
                 p.badgeid = selectedObject.badgeid;
                 p.name = selectedObject.name;
@@ -186,6 +186,7 @@ app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, US
         $modalInstance.dismiss('Close');
     };
 
+    $scope.action = 'adduser';
     $scope.title = 'Add User';
     $scope.buttonText = 'Add New User';
 
@@ -197,6 +198,7 @@ app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, US
     $scope.saveUser = function(user) {
 
         // user.enddate is passed as yyyy-MM-dd but should become dd/MM/yyyy :
+        //todo: delegate the following to a common service ?!
         if (user.enddate) {
             var dt = user.enddate.substr(8, 2) + '/' + user.enddate.substr(5, 2) + '/' + user.enddate.substr(0, 4);
             user.enddate = dt;
@@ -207,6 +209,7 @@ app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, US
             if (result.error) {
                 toastr.warning('Technical problem with "creating" new user ' + user.username + $scope.getErrorMsg(result.error));
                 $modalInstance.close(null);
+
             } else {
                 var u = angular.copy(user);
 
@@ -221,11 +224,20 @@ app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, US
     };
 });
 
-app.controller('userEditCtrl', function ($scope, $modalInstance, item, Data, USRPROFILE) {
+app.controller('userEditCtrl', function($scope, $modalInstance, item, Data, USRPROFILE) {
 
     $scope.user = angular.copy(item);
+
+    var today = new Date();
+    $scope.date = today.toISOString();
+
+    // user.enddate in format 'dd/MM/yyyy' needs to be converted into format 'yyyy-MM-dd' :
+    //todo: delegate the following to a common service ?!
+    var enddate = $scope.user.enddate;
+    if (enddate)
+        $scope.user.enddate = enddate.substr(6, 4) + '-' + enddate.substr(3, 2) + '-' + enddate.substr(0, 2);
+
     //TODO: check why user.profile is not selected automatically in dropdownlist ?!
-    //TODO: check format user.enddate is OK ?!
 
     $scope.availableProfiles = [
         { id: USRPROFILE.ADMINISTRATOR, name: USRPROFILE.ADMINISTRATOR },
@@ -234,34 +246,40 @@ app.controller('userEditCtrl', function ($scope, $modalInstance, item, Data, USR
         { id: USRPROFILE.SAVI, name: USRPROFILE.SAVI },
         { id: USRPROFILE.BUSINESS, name: USRPROFILE.BUSINESS },
     ];
-        
-    $scope.cancel = function () {
+
+    $scope.cancel = function() {
         $modalInstance.dismiss('Close');
     };
 
-    $scope.title = 'Edit User' ;
+    $scope.action = 'edituser';
+    $scope.title = 'Edit User';
     $scope.buttonText = 'Update User';
 
     var original = item;
     $scope.isClean = function() {
         return angular.equals(original, $scope.user);
     }
-    
-    $scope.saveUser = function (user) {
-        //TODO: check if updating an existing user is a PUT or POST request ?!
-        //TODO: /user of /users ?
 
-        Data.put('users/'+user.badgeid, user).then(function (result) {
+    $scope.saveUser = function(user) {
+
+        // user.enddate is passed as yyyy-MM-dd but should become dd/MM/yyyy :
+        //todo: delegate the following to a common service ?!
+        if (user.enddate) {
+            var dt = user.enddate.substr(8, 2) + '/' + user.enddate.substr(5, 2) + '/' + user.enddate.substr(0, 4);
+            user.enddate = dt;
+        }
+
+        Data.put('user/' + user.id + '?token=' + sessionStorage.userToken, user).then(function(result) {
             //TODO: complete the following ..
-            
-                    if(result.status != 'error'){
-                        var x = angular.copy(user);
-                        x.save = 'update';
 
-                        $modalInstance.close(x);
-                    }else{
-                        console.log(result);
-                    }
-                });
-        };
+            if (result.status != 'error') {
+                var x = angular.copy(user);
+                x.save = 'update';
+
+                $modalInstance.close(x);
+            } else {
+                console.log(result);
+            }
+        });
+    };
 });

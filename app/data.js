@@ -2,11 +2,13 @@ app.factory("Data", ['$http', '$location',
     function ($http, $q, $location) {
 
         var serviceBase = 'https://devicerestnodejsv1.herokuapp.com/private/api/v1/';
-
+        
         var obj = {};
 
         obj.get = function (q) {
-            return $http.get(serviceBase + q)
+            var serviceUrl = serviceBase + q;
+
+            return $http.get(serviceUrl)
                 .then(function (results) {
                     return results.data;
                 })
@@ -17,8 +19,9 @@ app.factory("Data", ['$http', '$location',
         };
 
         obj.post = function (q, object) {
-            // authentication should be done via the public service operation
             var serviceUrl = serviceBase + q;
+
+            // authentication should be done via the public service operation
             if (q == 'authenticate') {
                 serviceUrl = serviceUrl.replace('/private', '');   
             }
@@ -37,13 +40,23 @@ app.factory("Data", ['$http', '$location',
         };
 
         obj.put = function (q, object) {
-            return $http.put(serviceBase + q, object).then(function (results) {
-                return results.data;
-            });
+            var serviceUrl = serviceBase + q;
+
+            return $http.put(serviceUrl, object)
+                .then(function (results) {
+                    //todo: check if status == 200 ?! ..
+                    return results.data;
+                })
+                .catch(function (results) {
+                    console.log('Error in http put ' + q + ' //' + results.data);
+                    return null;
+                });
         };
 
         obj.delete = function (q) {
-            return $http.delete(serviceBase + q).then(function (results) {
+            var serviceUrl = serviceBase + q;
+
+            return $http.delete(serviceUrl).then(function (results) {
                 return results.data;
             });
         };

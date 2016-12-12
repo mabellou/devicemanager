@@ -11,19 +11,16 @@
 
         <form-element label="Badge ID" mod="user">            
             <input type="text" class="form-control" name="badgeid" placeholder="enter badge identifier" ng-model="user.badgeid" ng-maxlength="10" ng-minlength="1" maxlength="10" required />
-            <!--
-            <h1 ng-if="!user_for.badgeid.$valid">The value is too long</h1>
-            -->
         </form-element>
         <form-element label="Username" mod="user">
             <input type="text" class="form-control" name="username" placeholder="enter username" ng-model="user.username" ng-maxlength="15" maxlength="15" required />
         </form-element>
-        <form-element label="Password" mod="user">
+        <form-element label="Password" mod="user" ng-if="action=='adduser'">
             <input type="password" class="form-control" name="password" placeholder="enter password" ng-model="user.password" ng-maxlength="15" ng-minlength="6" maxlength="15" required />
         </form-element>
         <form-element label="Profile" mod="user">
             <select name="profile" class="form-control" placeholder="enter profile" ng-model="user.profile">
-                <option ng-repeat="option in availableProfiles" value="{{option.id}}">{{option.name}}</option>
+                <option ng-repeat="option in availableProfiles" value="{{option.id}}" ng-selected="option.name==user.profile">{{option.name}}</option>
             </select>
         </form-element>        
         <form-element label="Firstname" mod="user">
