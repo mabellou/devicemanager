@@ -3,7 +3,8 @@ app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $inte
     $scope.currentuser = {};
     $scope.devices = {};
 
-    //TODO: $interval( function(){ $scope.callAtInterval(); }, CONFIG.REFRESHINTERVAL);
+    $interval( function(){ $scope.callAtInterval(); }, CONFIG.REFRESHINTERVAL);
+    
     $scope.callAtInterval = function() {
         $scope.fetchDevices();
     };

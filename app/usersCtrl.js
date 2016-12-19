@@ -4,7 +4,7 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
     $scope.users = [];
     $scope.user = {};
 
-    //TODO: $interval(function() { $scope.callAtInterval(); }, CONFIG.REFRESHINTERVAL);
+    $interval(function() { $scope.callAtInterval(); }, CONFIG.REFRESHINTERVAL);
 
     $scope.callAtInterval = function() {
         $scope.fetchUsers();
@@ -34,14 +34,24 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
     };
 
     $scope.deleteUser = function(user) {
-        // todo: delete user should be a logical delete where the enddate will be set equal to today
 
-        if(confirm('Are you sure to remove the user ' + user.firstname + ' ' + user.lastname + ' ?')) {
-            Data.delete('user/' + user.id + '?token=' + sessionStorage.userToken)
-            .then(function(result) {
+        // !! deleting user is a logical delete where the enddate will be set equal to today
+        var user2delete = angular.copy(user);
 
-                //todo: check/adapt the following ?! ..
-                $scope.users = _.without($scope.users, _.findWhere($scope.users, {id: user.id}));
+        if (confirm('Are you sure to remove the user ' + user2delete.firstname + ' ' + user2delete.lastname + ' ?')) {
+            var today = new Date();
+            user2delete.enddate = today.toISOString();
+
+            Data.put('user/' + user2delete.id + '?token=' + sessionStorage.userToken, user2delete).then(function(result) {
+                //TODO: complete the following .. check the result / errorcode ?
+                if (false) { // || result.error) {
+                    toastr.warning('Technical problem with "deleting" the user ' + user2delete.username + $scope.getErrorMsg(result.error));
+                } else {
+                    //TODO: ... yyyy-MM-dd >> dd/MM/yyyy
+                    var ed = user2delete.enddate;
+                    user.enddate = ed.substr(8, 2) + '/' + ed.substr(5, 2) + '/' + ed.substr(0, 4); 
+
+                };
             });
         };
     };
@@ -238,8 +248,6 @@ app.controller('userEditCtrl', function($scope, $modalInstance, item, Data, USRP
     var enddate = $scope.user.enddate;
     if (enddate)
         $scope.user.enddate = enddate.substr(6, 4) + '-' + enddate.substr(3, 2) + '-' + enddate.substr(0, 2);
-
-    //TODO: check why user.profile is not selected automatically in dropdownlist ?!
 
     $scope.availableProfiles = [
         { id: USRPROFILE.ADMINISTRATOR, name: USRPROFILE.ADMINISTRATOR },

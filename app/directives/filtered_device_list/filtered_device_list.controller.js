@@ -18,7 +18,19 @@ app.controller('FilteredDeviceListController', function($scope, Data, DEVSTATUS,
     $scope.isAdministrator = function() {
         return $scope.currentuser.profile == USRPROFILE.ADMINISTRATOR;
     };
-
+    $scope.isBusiness = function() {
+        return $scope.currentuser.profile == USRPROFILE.BUSINESS;
+    }
+    $scope.isTester = function() {
+        return $scope.currentuser.profile == USRPROFILE.TESTER;
+    }
+    $scope.isIncubator = function() {
+        return $scope.currentuser.profile == USRPROFILE.INCUBATOR;
+    }
+    $scope.isSavi = function() {
+        return $scope.currentuser.profile == USRPROFILE.SAVI;
+    }
+    
     $scope.isSmartphone = function(device) {
         return device.type == DEVTYPE.SMARTPHONE;
     };
@@ -66,8 +78,20 @@ app.controller('FilteredDeviceListController', function($scope, Data, DEVSTATUS,
         }
     };
 
-    $scope.getClass = function() {
-        return 'info';
+    $scope.deviceConstraintVialotion = function() {
+        // constraint :
+        // Max. duration IN USE per device:
+        //  a.    Business user: 48 hrs
+        //  b.    Tester || Incubator || Savi user : either 5 hrs, or EOB
+
+        if ($scope.isBusiness) {
+            //TODO...
+            
+        }
+        if ($scope.isTester || $scope.isIncubator || $scope.isSavi) {
+            //TODO...
+        }                                    
+        return false;
     };
 
     $scope.formatStatus = function(status) {

@@ -10,15 +10,11 @@
 
 *** 2DO - Front end :
 
+(1) ** implement the (FE) constraints
 
-
-** Implement the constraints .. check list/specs by Anthony F. ... check papernotes ?! ...
   [FE : OK]  1.    White list of users: no logon, no access
-<<<<<<< HEAD
-  [BE : ??]  2.    Permitted user groups:
-=======
+
   [BE : OK]  2.    Permitted user groups:
->>>>>>> 7c486883c2055bbd9305403787664274a3f53be9
                     a.    ‘T’ = Tester: must only see/use devices for his group
                     b.    ‘I’ = Incubator: must see/use devices for his group + ‘T’
                     c.    ‘S’ = Savi: must see/use devices for his group + ‘T’
@@ -27,9 +23,10 @@
 
   [FE : OK]  3.    Max. number of devices per user = 3
 
-  [FE : ??][BE : ??]  4.  Max. duration LOCKED per device: 15min .. 
+  [FE : N/A][BE : OK]  
+                      Max. duration LOCKED per device: 15min .. 
                       >> action  : unlock device automatically (by BE ?)
-
+  [FE : ??][BE : ??]  
                       Max. duration IN USE per device:
                         a.    B: 48 hrs
                         b.    T/I/S: either 5 hrs, or EOB
@@ -40,8 +37,22 @@
   
 
 
-** 
-  ** define the API contracts for creating a new and/or updating an existing user :
+(2) ** alignment of list-columns : 
+      -- List (devices && users) columns must be aligned
+      -- List Devices .. devices inuse && locked should be aligned vertically with list #3
+
+(3) ** complete Edit & Delete User(s) aka CRUD operations on Users & Devices ..
+    -- modal confirmation via : http://angular-ui.github.io/bootstrap/#/modal
+    -- QUID ErrorMessages (= HTTP 200 ?!) returned by BackEnd ?? .. check refactored ErrorMessages returned by BE = Slack message by Marwan
+
+    
+(4) ** implementation of Create, Edit & Delete Device(s)
+
+
+
+===============================================================================================================
+
+  ++ define the API contracts for creating a new and/or updating an existing user :
     ---- quid the fields of such 'userDTO' ??
     ---- quid the maximumlength, datatype, required or not ? .. of each user property
 
@@ -56,25 +67,19 @@
 
 
 
-  -- QUID ErrorMessages (= HTTP 200 ?!) returned by BackEnd ?? .. check refactored ErrorMessages returned by BE = Slack message by Marwan
-
-  -- CRUD operations 4 administrators .. on Devices, on Users, ...
-
-  -- List (devices && users) columns must be aligned
-  -- List Devices .. devices inuse && locked should be aligned vertically with list #3
-
+  
+  
+  
 
 *** 2DO - Back end :
 
-<<<<<<< HEAD
 -- provide a service operation which returns configuration items : max nbr of devices per user, ..
 
 -- return the device list in function of the user (profile ..)
 -- only the valid user can be authenticated
 -- for an admin, also the unavailable device are returned, not for the other users/profiles
 -- list of user only available for administrator
-=======
->>>>>>> 7c486883c2055bbd9305403787664274a3f53be9
+
 -- how to communicate between the badge and the user
 
 

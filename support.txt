@@ -1,5 +1,6 @@
 
 * Simple Modal Dialog ?! :
+-- http://www.dwmkerr.com/the-only-angularjs-modal-service-youll-ever-need/
 -- https://www.codeproject.com/Articles/992699/An-Advanced-and-Easy-use-AngularJS-Modal-Dialog
 
 * TOASTR :
