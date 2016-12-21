@@ -1,9 +1,9 @@
-var app = angular.module('myApp', ['ngRoute', 'ui.bootstrap', 'ngAnimate', 'toastr']);
+var app = angular.module('myApp', ['ngRoute', 'ui.bootstrap', 'ngAnimate', 'toastr', 'angularMoment']);
 
 app.constant('DEVSTATUS',   { 'AVAILABLE' : 'available', 'LOCKED' : 'locked', 'INUSE' : 'inuse' });
 app.constant('DEVTYPE',     { 'SMARTPHONE' : 'smartphone', 'TABLET' : 'tablet' });
 app.constant('USRPROFILE',  { 'ADMINISTRATOR' : 'administrator', 'TESTER' : 'tester', 'INCUBATOR' : 'incubator', 'SAVI' : 'savi', 'BUSINESS' : 'business' });
-app.constant('CONFIG',      { 'MAXDEVICES4CURUSR' : 3, 'REFRESHINTERVAL' : 3000 });
+app.constant('CONFIG',      { 'MAXDEVICES4CURUSR' : 3, 'REFRESHINTERVAL' : 3000, 'MAXHRSINUSEBYB' : 5, 'MAXHRSINUSEBYTIS' : 48 });
 app.constant('ENVIRONMENT', { 'DEBUG' : true });
 
 app.config(['$routeProvider',

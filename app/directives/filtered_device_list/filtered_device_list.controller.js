@@ -1,4 +1,4 @@
-app.controller('FilteredDeviceListController', function($scope, Data, DEVSTATUS, CONFIG, USRPROFILE, ENVIRONMENT, DEVTYPE, toastr) {
+app.controller('FilteredDeviceListController', function($scope, Data, DEVSTATUS, CONFIG, USRPROFILE, ENVIRONMENT, DEVTYPE, toastr, moment) {
 
     $scope.columns = [
         { text: "Box ID", predicate: "boxid", sortable: true, dataType: "number" },
@@ -30,7 +30,7 @@ app.controller('FilteredDeviceListController', function($scope, Data, DEVSTATUS,
     $scope.isSavi = function() {
         return $scope.currentuser.profile == USRPROFILE.SAVI;
     }
-    
+
     $scope.isSmartphone = function(device) {
         return device.type == DEVTYPE.SMARTPHONE;
     };
@@ -78,19 +78,43 @@ app.controller('FilteredDeviceListController', function($scope, Data, DEVSTATUS,
         }
     };
 
-    $scope.deviceConstraintVialotion = function() {
+    $scope.deviceConstraintViolation = function(device) {
         // constraint :
         // Max. duration IN USE per device:
         //  a.    Business user: 48 hrs
         //  b.    Tester || Incubator || Savi user : either 5 hrs, or EOB
 
-        if ($scope.isBusiness) {
-            //TODO...
-            
+        // get the maximum hours a device can be in use by a Tester || Incubator || Savi teammember :
+        var maxHoursInUse4TIS = parseInt(CONFIG.MAXHRSINUSEBYTIS);
+        // get the maximum hours a device can be in use by a Business teammember :
+        var maxHoursInUse4B = parseInt(CONFIG.MAXHRSINUSEBYB);
+
+        //TODO: remove this :
+        device.statusobject.statusdate = '12/21/2016 17:13:14';     // = MM/dd/yyyy hh:mm:ss    
+
+        if (device.statusobject && device.statusobject.statusdate) {
+            //TODO: check date format as received from VT backend ..
+            var statusdate = moment(device.statusobject.statusdate, 'MM/DD/YYYY hh:mm:ss');
+
+            // is current user member of the 'business' team ?
+            if ($scope.isBusiness) {
+                // add the maximum hours in use 4 business people : 
+                var statusdateplus = moment(statusdate).add(maxHoursInUse4B, 'h');
+                // compare statusdateplus with now (= actual datetime) .. 
+                // if now > statusdateplus then return true else false :
+                return moment().isAfter(statusdateplus);
+            }
+
+            // OR is current user member of the Testers || Incubator || SAVI team ?
+            if ($scope.isTester || $scope.isIncubator || $scope.isSavi) {
+                
+                //TODO... repeat & update the previous logic 
+
+                return true;
+            }
         }
-        if ($scope.isTester || $scope.isIncubator || $scope.isSavi) {
-            //TODO...
-        }                                    
+
+        // return false as default!                         
         return false;
     };
 

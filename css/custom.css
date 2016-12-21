@@ -305,3 +305,4 @@ margin-top: -4.5px;
 
 .red { background-color: red; }
 .red-opacity-05 {background-color: rgba(255, 0, 0, 0.5);}   /* red with 50% opacity */
+.red-opacity-025 {background-color: rgba(255, 0, 0, 0.25);}   /* red with 25% opacity */

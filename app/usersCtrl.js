@@ -17,7 +17,7 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
     //todo: getErrorMsg() should become a common function, reuseable in multiple controlleers ..
     $scope.getErrorMsg = function(dataError) {
         if (dataError) {
-            return (ENVIRONMENT.DEBUG ? '   [' + dataError.text + ' - ' + dataError.code + ']' : '');
+            return (ENVIRONMENT.DEBUG ? '   [' + dataError.text + ']' : '');
         }
     };
 
