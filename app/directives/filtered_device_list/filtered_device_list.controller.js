@@ -107,10 +107,14 @@ app.controller('FilteredDeviceListController', function($scope, Data, DEVSTATUS,
 
             // OR is current user member of the Testers || Incubator || SAVI team ?
             if ($scope.isTester || $scope.isIncubator || $scope.isSavi) {
-                
-                //TODO... repeat & update the previous logic 
+                // add the maximum hours in use 4 testers, savi or incubator colleagues : 
+                var statusdateplus = moment(statusdate).add(maxHoursInUse4TIS, 'h');
 
-                return true;
+                //TODO: also integrate EOD as check/constraint ..
+                
+                // compare statusdateplus with now (= actual datetime) .. 
+                // if now > statusdateplus then return true else false :
+                return moment().isAfter(statusdateplus);
             }
         }
 

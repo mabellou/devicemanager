@@ -57,7 +57,10 @@ app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $inte
 
     /* authenticate the 'current user' ?! .. */
     if (!sessionStorage.userToken || sessionStorage.userToken == '') {
+        
+        //todo: remove the following :
         /* var credentials = { username : 'marcvermeir', password : 'azerty' }; */
+
         var credentials = Creds.getCredentials();
         if (credentials.username == '' || credentials.password == '') {
             $location.path('/login');

@@ -140,7 +140,6 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
                     });
                 }
             } else {
-                +$scope.getErrorMsg(data.error)
                 toastr.warning('Technical problem with authenticating user ' + credentials.username + $scope.getErrorMsg(data.error));
                 $location.path('/login');
             }
