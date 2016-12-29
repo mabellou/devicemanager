@@ -1,4 +1,4 @@
-app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interval, Data, Creds, USRPROFILE, CONFIG, ENVIRONMENT, toastr) {
+app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interval, Data, Creds, USRPROFILE, CONFIG, ENVIRONMENT, toastr, Common) {
 
     $scope.currentuser = {};
     $scope.users = [];
@@ -14,12 +14,13 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
         return ENVIRONMENT.DEBUG || $scope.currentuser.profile == USRPROFILE.ADMINISTRATOR;
     };
 
-    //todo: getErrorMsg() should become a common function, reuseable in multiple controlleers ..
+    /*
     $scope.getErrorMsg = function(dataError) {
         if (dataError) {
             return (ENVIRONMENT.DEBUG ? '   [' + dataError.text + ']' : '');
         }
     };
+    */
 
     $scope.fetchUsers = function(notifyUser) {
         Data.get('users?token=' + sessionStorage.userToken).then(function(data) {
@@ -29,7 +30,7 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
                     toastr.success('Users were loaded successfully!');
             } else
             if (notifyUser)
-                toastr.warning('Technical problem with fetching users!' + $scope.getErrorMsg(data.error));
+                toastr.warning('Technical problem with fetching users!' + Common.GetErrorMessage(ENVIRONMENT.DEBUG, data.error));
         });
     };
 
@@ -45,7 +46,7 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
             Data.put('user/' + user2delete.id + '?token=' + sessionStorage.userToken, user2delete).then(function(result) {
                 //TODO: complete the following .. check the result / errorcode ?
                 if (false) { // || result.error) {
-                    toastr.warning('Technical problem with "deleting" the user ' + user2delete.username + $scope.getErrorMsg(result.error));
+                    toastr.warning('Technical problem with "deleting" the user ' + user2delete.username + Common.GetErrorMessage(ENVIRONMENT.DEBUG, result.error));
                 } else {
                     //TODO: ... yyyy-MM-dd >> dd/MM/yyyy
                     var ed = user2delete.enddate;
@@ -134,13 +135,13 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
                                 $scope.fetchUsers(true);
                             }
                         } else {
-                            toastr.warning('Technical problem with fetching user ' + sessionStorage.userId + $scope.getErrorMsg(data.error));
+                            toastr.warning('Technical problem with fetching user ' + sessionStorage.userId + Common.GetErrorMessage(ENVIRONMENT.DEBUG, data.error));
                             $location.path('/login');
                         }
                     });
                 }
             } else {
-                toastr.warning('Technical problem with authenticating user ' + credentials.username + $scope.getErrorMsg(data.error));
+                toastr.warning('Technical problem with authenticating user ' + credentials.username + Common.GetErrorMessage(ENVIRONMENT.DEBUG, data.error);
                 $location.path('/login');
             }
         });
@@ -171,7 +172,7 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
     */
 });
 
-app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, USRPROFILE, ENVIRONMENT, toastr) {
+app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, USRPROFILE, ENVIRONMENT, toastr, Common) {
 
     $scope.user = angular.copy(item);
 
@@ -186,12 +187,13 @@ app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, US
         { id: USRPROFILE.BUSINESS, name: USRPROFILE.BUSINESS },
     ];
 
-    //todo: getErrorMsg() should become a common function, reuseable in multiple controlleers ..
+    /*
     $scope.getErrorMsg = function(dataError) {
         if (dataError) {
             return (ENVIRONMENT.DEBUG ? '   [' + dataError.text + ' - ' + dataError.code + ']' : '');
         }
     };
+    */
 
     $scope.cancel = function() {
         $modalInstance.dismiss('Close');
@@ -218,7 +220,7 @@ app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, US
         Data.post('user?token=' + sessionStorage.userToken, user).then(function(result) {
 
             if (result.error) {
-                toastr.warning('Technical problem with "creating" new user ' + user.username + $scope.getErrorMsg(result.error));
+                toastr.warning('Technical problem with "creating" new user ' + user.username + Common.GetErrorMessage(ENVIRONMENT.DEBUG, result.error));
                 $modalInstance.close(null);
 
             } else {
@@ -279,7 +281,7 @@ app.controller('userEditCtrl', function($scope, $modalInstance, item, Data, USRP
         }
 
         Data.put('user/' + user.id + '?token=' + sessionStorage.userToken, user).then(function(result) {
-            //TODO: complete the following ..
+            //TODO: complete the following .. if (result.error) { .. } else { .. }
 
             if (result.status != 'error') {
                 var x = angular.copy(user);

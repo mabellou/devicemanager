@@ -1,4 +1,4 @@
-app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $interval, Data, Creds, USRPROFILE, CONFIG, ENVIRONMENT, toastr) {
+app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $interval, Data, Creds, USRPROFILE, CONFIG, ENVIRONMENT, toastr, Common) {
 
     $scope.currentuser = {};
     $scope.devices = {};
@@ -9,12 +9,13 @@ app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $inte
         $scope.fetchDevices();
     };
 
-    //todo: getErrorMsg() should become a common function, reuseable in multiple controlleers ..
+    /*..
     $scope.getErrorMsg = function(dataError) {
         if (dataError) {
             return (ENVIRONMENT.DEBUG ? '   [' + dataError.text + ']' : '');
         }
     };
+    */
 
     $scope.isAdministrator = function() {
         return ENVIRONMENT.DEBUG || $scope.currentuser.profile == USRPROFILE.ADMINISTRATOR;
@@ -28,7 +29,7 @@ app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $inte
                     toastr.success('Devices were loaded successfully!');
             } else
             if (notifyUser) {
-                toastr.warning('Technical problem in fetching devices!' + $scope.getErrorMsg(data.error));
+                toastr.warning('Technical problem in fetching devices!' + Common.GetErrorMessage(ENVIRONMENT.DEBUG, data.error);
             }
         }); 
     };
@@ -89,13 +90,13 @@ app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $inte
                             $scope.fetchDevices(true);
 
                         } else {
-                            toastr.warning('Technical problem with fetching user ' + sessionStorage.userId + $scope.getErrorMsg(data.error));
+                            toastr.warning('Technical problem with fetching user ' + sessionStorage.userId + Common.GetErrorMessage(ENVIRONMENT.DEBUG, data.error));
                             $location.path('/login');
                         }
                     });
                 }
             } else {
-                toastr.warning('Technical problem with authenticating user ' + credentials.username + $scope.getErrorMsg(data.error));
+                toastr.warning('Technical problem with authenticating user ' + credentials.username + Common.GetErrorMessage(ENVIRONMENT.DEBUG, data.error));
                 Creds.setCredentials('', '');
                 $location.path('/login');
             }

@@ -62,4 +62,4 @@ app.factory("Data", ['$http', '$location',
         };
         
         return obj;
-}]);
+    }]);
