@@ -1,42 +1,37 @@
-app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $interval, Data, Creds, USRPROFILE, CONFIG, ENVIRONMENT, toastr, Common) {
+app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $interval, Data, Creds, USRPROFILE, CONFIG, ENVIRONMENT, toastr, Common, MESSAGES) {
 
     $scope.currentuser = {};
     $scope.devices = {};
 
-    $interval( function(){ $scope.callAtInterval(); }, CONFIG.REFRESHINTERVAL);
-    
+    $interval(function() { $scope.callAtInterval(); }, (ENVIRONMENT.DEBUG ? 60000 : CONFIG.REFRESHINTERVAL));
+
     $scope.callAtInterval = function() {
         $scope.fetchDevices();
     };
 
-    /*..
-    $scope.getErrorMsg = function(dataError) {
-        if (dataError) {
-            return (ENVIRONMENT.DEBUG ? '   [' + dataError.text + ']' : '');
-        }
-    };
-    */
-
     $scope.isAdministrator = function() {
         return ENVIRONMENT.DEBUG || $scope.currentuser.profile == USRPROFILE.ADMINISTRATOR;
     };
-    
+
     $scope.fetchDevices = function(notifyUser) {
         Data.get('devices?token=' + sessionStorage.userToken).then(function(data) {
+            if (!data) {
+                toastr.error(MESSAGES.SERVICENOK);
+                return;
+            }
+
             if (!data.error) {
                 $scope.devices = data;
                 if (notifyUser)
                     toastr.success('Devices were loaded successfully!');
             } else
             if (notifyUser) {
-                toastr.warning('Technical problem in fetching devices!' + Common.GetErrorMessage(ENVIRONMENT.DEBUG, data.error);
+                toastr.warning('Technical problem in fetching devices!' + Common.GetErrorMessage(ENVIRONMENT.DEBUG, data.error));
             }
-        }); 
+        });
     };
 
-   
-    /*
-    $scope.create = function (p,size) {
+    /* $scope.create = function (p,size) {
         var modalInstance = $modal.open({
           templateUrl: 'partials/devicesEdit.html',
           controller: 'deviceCreateCtrl',
@@ -53,21 +48,43 @@ app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $inte
                 $scope.devices.push(selectedObject);
                 $scope.devices = $filter('orderBy')($scope.devices, 'caseid');
         });
+    }; */
+
+    $scope.create = function(p, size) {
+        var modalInstance = $modal.open({
+            templateUrl: 'partials/devicesEdit.html',
+            controller: 'deviceCreateCtrl',
+            size: size,
+            resolve: {
+                item: function() {
+                    return p;
+                }
+            }
+        });
+        modalInstance.result.then(function(selectedObject) {
+            if (selectedObject) {
+                delete selectedObject.save;
+                //todo: ?? delete selectedObject.id;
+                $scope.devices.push(selectedObject);
+                $scope.devices = $filter('orderBy')($scope.devices, 'caseid', 'reverse');
+            }
+        });
     };
-    */
 
     /* authenticate the 'current user' ?! .. */
     if (!sessionStorage.userToken || sessionStorage.userToken == '') {
-        
-        //todo: remove the following :
         /* var credentials = { username : 'marcvermeir', password : 'azerty' }; */
-
         var credentials = Creds.getCredentials();
         if (credentials.username == '' || credentials.password == '') {
             $location.path('/login');
         }
 
         Data.post('authenticate', credentials).then(function(data) {
+            if (!data) {
+                toastr.error(MESSAGES.SERVICENOK);
+                return;
+            }
+
             if (!data.error) {
                 sessionStorage.userToken = data.token;
                 sessionStorage.userId = data.userid;
@@ -78,10 +95,15 @@ app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $inte
                 } else {
                     /* call the (VT) Service to fetch the 'current user' info .. */
                     Data.get('user/' + sessionStorage.userId + '?token=' + sessionStorage.userToken).then(function(data) {
+                        if (!data) {
+                            toastr.error(MESSAGES.SERVICENOK);
+                            return;
+                        }
+
                         if (!data.error) {
                             /* capture the user data into a $scope.currentuser object .. */
                             $scope.currentuser = { userid: data.id, fullname: data.fullname, profile: data.profile };
-                            
+
                             sessionStorage.userProfile = $scope.currentuser.profile;
                             sessionStorage.fullName = $scope.currentuser.fullname;
 
@@ -106,14 +128,6 @@ app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $inte
 
         $scope.fetchDevices();
     };
-
-
-
-    /* ???
-    $scope.IsAdministrator = function() {
-        return ($scope.currentuser.profile == USRPROFILE.ADMINISTRATOR)
-    };
-    */
 
     /* NOT YET SUPPORTED
         $scope.changeDeviceStatus = function(device) {
@@ -184,33 +198,52 @@ app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $inte
                     p.model = selectedObject.model;
                     p.os = selectedObject.os;
             });
-        };
-        
-        $scope.create = function (p,size) {
-            var modalInstance = $modal.open({
-              templateUrl: 'partials/devicesEdit.html',
-              controller: 'deviceCreateCtrl',
-              size: size,
-              resolve: {
-                item: function () {
-                  return p;
-                }
-              }
-            });
-            modalInstance.result.then(function(selectedObject) {
-                    delete selectedObject.save;
-                    delete selectedObject.id;
-                    $scope.devices.push(selectedObject);
-                    $scope.devices = $filter('orderBy')($scope.devices, 'caseid');
-            });
-        };
-        
+        }; 
     */
-
 });
 
-/* NOT YET SUPPORTED
+app.controller('deviceCreateCtrl', function($scope, $modalInstance, item, Data, USRPROFILE, ENVIRONMENT, toastr, Common, MESSAGES) {
 
+    $scope.device = angular.copy(item);
+
+    $scope.cancel = function() {
+        $modalInstance.dismiss('Close');
+    };
+
+    $scope.action = 'adddevice';
+    $scope.title = 'Add Device';
+    $scope.buttonText = 'Add New Device';
+
+    var original = item;
+    $scope.isClean = function() {
+        return angular.equals(original, $scope.device);
+    }
+
+    $scope.saveDevice = function(device) {
+        // .. device.status = 'Available';
+        Data.post('device?token=' + sessionStorage.userToken, device).then(function(result) {
+            if (!result) {
+                toastr.error(MESSAGES.SERVICENOK);
+                return;
+            }
+
+            if (result.error) {
+                toastr.warning('Technical problem with "creating" new device ' + device.caseid + Common.GetErrorMessage(ENVIRONMENT.DEBUG, result.error));
+                $modalInstance.close(null);
+            } else {
+                var d = angular.copy(device);
+
+                d.save = 'insert';
+                d.id = parseInt(result.data);
+
+                $modalInstance.close(x);
+            }
+        });
+    };
+});
+
+
+/* NOT YET SUPPORTED
 app.controller('deviceEditCtrl', function ($scope, $modalInstance, item, Data) {
 
   $scope.device = angular.copy(item);
@@ -261,35 +294,6 @@ app.controller('userLinkCtrl', function ($scope, $modalInstance, item, Data) {
                 Data.put('devices/'+devicetemp.refid, devicetemp).then(function (result) {
                     if(result.status != 'error'){
                         var x = angular.copy(device);
-                        $modalInstance.close(x);
-                    }else{
-                        console.log(result);
-                    }
-                });
-        };
-});
-
-app.controller('deviceCreateCtrl', function ($scope, $modalInstance, item, Data) {
-
-  $scope.device = angular.copy(item);
-        
-        $scope.cancel = function () {
-            $modalInstance.dismiss('Close');
-        };
-        $scope.title = 'Add Device' ;
-        $scope.buttonText = 'Add New Device';
-
-        var original = item;
-        $scope.isClean = function() {
-            return angular.equals(original, $scope.device);
-        }
-        $scope.saveDevice = function (device) {
-                device.status = 'Available';
-                Data.post('devices', device).then(function (result) {
-                    if(result.status != 'error'){
-                        var x = angular.copy(device);
-                        x.save = 'insert';
-                        x.id = result.data;
                         $modalInstance.close(x);
                     }else{
                         console.log(result);

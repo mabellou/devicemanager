@@ -1,10 +1,10 @@
-app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interval, Data, Creds, USRPROFILE, CONFIG, ENVIRONMENT, toastr, Common) {
+app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interval, Data, Creds, USRPROFILE, CONFIG, ENVIRONMENT, toastr, Common, MESSAGES) {
 
     $scope.currentuser = {};
     $scope.users = [];
     $scope.user = {};
 
-    $interval(function() { $scope.callAtInterval(); }, CONFIG.REFRESHINTERVAL);
+    $interval(function() { $scope.callAtInterval(); }, (ENVIRONMENT.DEBUG ? 60000 : CONFIG.REFRESHINTERVAL));
 
     $scope.callAtInterval = function() {
         $scope.fetchUsers();
@@ -14,16 +14,13 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
         return ENVIRONMENT.DEBUG || $scope.currentuser.profile == USRPROFILE.ADMINISTRATOR;
     };
 
-    /*
-    $scope.getErrorMsg = function(dataError) {
-        if (dataError) {
-            return (ENVIRONMENT.DEBUG ? '   [' + dataError.text + ']' : '');
-        }
-    };
-    */
-
     $scope.fetchUsers = function(notifyUser) {
         Data.get('users?token=' + sessionStorage.userToken).then(function(data) {
+            if (!data) {
+                toastr.error(MESSAGES.SERVICENOK);
+                return;
+            }
+
             if (!data.error) {
                 $scope.users = data;
                 if (notifyUser)
@@ -39,19 +36,22 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
         // !! deleting user is a logical delete where the enddate will be set equal to today
         var user2delete = angular.copy(user);
 
-        if (confirm('Are you sure to remove the user ' + user2delete.firstname + ' ' + user2delete.lastname + ' ?')) {
-            var today = new Date();
-            user2delete.enddate = today.toISOString();
+        var username = user2delete.firstname + ' ' + user2delete.lastname;
 
+        if (confirm('Are you sure to remove the user ' + username + ' ?')) {
+            // set the user's enddate equal to today :
+            user2delete.enddate = moment().format('DD/MM/YYYY');
+            
             Data.put('user/' + user2delete.id + '?token=' + sessionStorage.userToken, user2delete).then(function(result) {
-                //TODO: complete the following .. check the result / errorcode ?
-                if (false) { // || result.error) {
+                if (!result) {
+                    toastr.error(MESSAGES.SERVICENOK);
+                    return;
+                }
+
+                if (result.error) {
                     toastr.warning('Technical problem with "deleting" the user ' + user2delete.username + Common.GetErrorMessage(ENVIRONMENT.DEBUG, result.error));
                 } else {
-                    //TODO: ... yyyy-MM-dd >> dd/MM/yyyy
-                    var ed = user2delete.enddate;
-                    user.enddate = ed.substr(8, 2) + '/' + ed.substr(5, 2) + '/' + ed.substr(0, 4); 
-
+                    toastr.info('User ' + username + ' was removed successfully !');
                 };
             });
         };
@@ -90,8 +90,6 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
         });
         modalInstance.result.then(function(selectedObject) {
             if (selectedObject) {
-
-                //todo: check the following ?! :
                 p.badgeid = selectedObject.badgeid;
                 p.username = selectedObject.username;
                 p.firstname = selectedObject.firstname;
@@ -111,6 +109,11 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
         }
 
         Data.post('authenticate', credentials).then(function(data) {
+            if (!data) {
+                toastr.error(MESSAGES.SERVICENOK);
+                return;
+            }
+
             if (!data.error) {
                 sessionStorage.userToken = data.token;
                 sessionStorage.userId = data.userid;
@@ -121,6 +124,11 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
                 } else {
                     /* call the (VT) Service to fetch the 'current user' info .. */
                     Data.get('user/' + sessionStorage.userId + '?token=' + sessionStorage.userToken).then(function(data) {
+                        if (!data) {
+                            toastr.error(MESSAGES.SERVICENOK);
+                            return;
+                        }
+
                         if (!data.error) {
                             // capture the user data into a $scope.currentuser object ..
                             $scope.currentuser = { userid: data.id, fullname: data.fullname, profile: data.profile };
@@ -141,7 +149,7 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
                     });
                 }
             } else {
-                toastr.warning('Technical problem with authenticating user ' + credentials.username + Common.GetErrorMessage(ENVIRONMENT.DEBUG, data.error);
+                toastr.warning('Technical problem with authenticating user ' + credentials.username + Common.GetErrorMessage(ENVIRONMENT.DEBUG, data.error));
                 $location.path('/login');
             }
         });
@@ -162,17 +170,9 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
         { text: "#Devices In Use", predicate: "counterinuse", sortable: true, dataType: "number" },
         { text: "Action", predicate: "", sortable: false }
     ];
-
-    /* NOT YET SUPPORTED
-    $scope.getClass = function(date) {
-        return 'info';
-        // todo: class value should be 'danger' if date (dd/mm/yyyy) < currentdate, otherwise return 'info'
-        // return {'info': date - today <= 0, 'danger': (date - today > 0 && date - today <= 3)};
-    };
-    */
 });
 
-app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, USRPROFILE, ENVIRONMENT, toastr, Common) {
+app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, USRPROFILE, ENVIRONMENT, toastr, Common, MESSAGES) {
 
     $scope.user = angular.copy(item);
 
@@ -186,14 +186,6 @@ app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, US
         { id: USRPROFILE.SAVI, name: USRPROFILE.SAVI },
         { id: USRPROFILE.BUSINESS, name: USRPROFILE.BUSINESS },
     ];
-
-    /*
-    $scope.getErrorMsg = function(dataError) {
-        if (dataError) {
-            return (ENVIRONMENT.DEBUG ? '   [' + dataError.text + ' - ' + dataError.code + ']' : '');
-        }
-    };
-    */
 
     $scope.cancel = function() {
         $modalInstance.dismiss('Close');
@@ -209,7 +201,6 @@ app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, US
     }
 
     $scope.saveUser = function(user) {
-
         // user.enddate is passed as yyyy-MM-dd but should become dd/MM/yyyy :
         //todo: delegate the following to a common service ?!
         if (user.enddate) {
@@ -218,6 +209,10 @@ app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, US
         }
 
         Data.post('user?token=' + sessionStorage.userToken, user).then(function(result) {
+            if (!result) {
+                toastr.error(MESSAGES.SERVICENOK);
+                return;
+            }
 
             if (result.error) {
                 toastr.warning('Technical problem with "creating" new user ' + user.username + Common.GetErrorMessage(ENVIRONMENT.DEBUG, result.error));
@@ -231,13 +226,15 @@ app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, US
                 u.save = 'insert';
                 u.id = parseInt(result.data);
 
+                toastr.info('User ' + u.fullname + ' is created !');
+
                 $modalInstance.close(u);
             }
         });
     };
 });
 
-app.controller('userEditCtrl', function($scope, $modalInstance, item, Data, USRPROFILE) {
+app.controller('userEditCtrl', function($scope, $modalInstance, item, Data, USRPROFILE, MESSAGES, toastr) {
 
     $scope.user = angular.copy(item);
 
@@ -281,15 +278,25 @@ app.controller('userEditCtrl', function($scope, $modalInstance, item, Data, USRP
         }
 
         Data.put('user/' + user.id + '?token=' + sessionStorage.userToken, user).then(function(result) {
-            //TODO: complete the following .. if (result.error) { .. } else { .. }
+            if (!result) {
+                toastr.error(MESSAGES.SERVICENOK);
+                return;
+            }
 
-            if (result.status != 'error') {
-                var x = angular.copy(user);
-                x.save = 'update';
+            if (result.error) {
+                toastr.warning('Technical problem with "updating" existing user ' + user.username + Common.GetErrorMessage(ENVIRONMENT.DEBUG, result.error));
+                $modalInstance.close(null);
 
-                $modalInstance.close(x);
             } else {
-                console.log(result);
+                var u = angular.copy(user);
+
+                u.fullname = u.firstname + ' ' + u.lastname;
+
+                u.save = 'update';
+
+                toastr.info('User ' + u.fullname + ' is updated !');
+
+                $modalInstance.close(u);
             }
         });
     };

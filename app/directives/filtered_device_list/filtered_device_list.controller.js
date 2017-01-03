@@ -1,4 +1,4 @@
-app.controller('FilteredDeviceListController', function($scope, Data, DEVSTATUS, CONFIG, USRPROFILE, ENVIRONMENT, DEVTYPE, toastr, moment, Common) {
+app.controller('FilteredDeviceListController', function($scope, Data, DEVSTATUS, CONFIG, USRPROFILE, ENVIRONMENT, DEVTYPE, toastr, moment, Common, MESSAGES) {
 
     $scope.columns = [
         { text: "Box ID", predicate: "boxid", sortable: true, dataType: "number" },
@@ -51,19 +51,10 @@ app.controller('FilteredDeviceListController', function($scope, Data, DEVSTATUS,
         return status == DEVSTATUS.LOCKED;
     };
 
-    /*
-    $scope.getErrorMsg = function(dataError) {
-
-        if (dataError) {    
-            return (ENVIRONMENT.DEBUG ? '   [' + dataError.text + ']' : '');
-        }
-    };
-    */
-
     $scope.countDevices4CurrentUser = function() {
         var count = 0;
 
-        // ..count the devices InUse or Locked by the current user ..
+        // == count the devices InUse or Locked by the current user ..
         angular.forEach($scope.devices, function(device) {
             if ((device.statusobject.status == DEVSTATUS.LOCKED || device.statusobject.status == DEVSTATUS.INUSE) &&
                 (device.statusobject.userobject && device.statusobject.userobject.userid == $scope.currentuser.userid))
@@ -74,7 +65,7 @@ app.controller('FilteredDeviceListController', function($scope, Data, DEVSTATUS,
     };
 
     $scope.lockDisabled = function() {
-        // .. constraint implemented : a 'VT' user can have maxium .. devices in use or locked :
+        // == constraint implemented : a 'VT' user can have maxium .. devices in use or locked :
         return $scope.countDevices4CurrentUser() >= CONFIG.MAXDEVICES4CURUSR;
     };
 
@@ -105,16 +96,16 @@ app.controller('FilteredDeviceListController', function($scope, Data, DEVSTATUS,
         // get the maximum hours a device can be in use by a Business teammember :
         var maxHoursInUse4B = parseInt(CONFIG.MAXHRSINUSEBYB);
 
-        //TODO: remove this :
+        /*
         if (ENVIRONMENT.DEBUG) {
             // >>> MM/dd/yyyy hh:mm:ss
             device.statusobject.statusdate = '12/27/2016 12:10:00';         
         };
+        */
 
         if (device.statusobject && device.statusobject.statusdate) {
             
-            //TODO: check date format as received from VT backend ..
-            var statusdate = moment(device.statusobject.statusdate, 'MM/DD/YYYY hh:mm:ss');
+            var statusdate = moment(device.statusobject.statusdate, 'DD/MM/YYYY hh:mm:ss');
 
             // is current user member of the 'business' team ?
             if ($scope.isBusiness()) {
@@ -165,7 +156,11 @@ app.controller('FilteredDeviceListController', function($scope, Data, DEVSTATUS,
 
             /* call the (VT) service to RETURN the concerned device .. */
             Data.post('device/status' + '?token=' + sessionStorage.userToken, returnRequest).then(function(data) {
-                //TODO: quid 'Error' code = 15 & text = 'Input validation error. Userid is empty ..' ?? 
+                if (!data) {
+                    toastr.error(MESSAGES.SERVICENOK);
+                    return;
+                }
+
                 if (!data.error) {
                     /* update the local 'model' .. */
                     device.statusobject = { status: DEVSTATUS.AVAILABLE, userobject: null };
@@ -184,7 +179,11 @@ app.controller('FilteredDeviceListController', function($scope, Data, DEVSTATUS,
 
             /* call the (VT) service to UNLOCK the concerned device .. */
             Data.post('device/status' + '?token=' + sessionStorage.userToken, unlockRequest).then(function(data) {
-                //TODO: quid 'Error' code = 15 & text = 'Input validation error. Userid is empty ..' ??  
+                if (!data) {
+                    toastr.error(MESSAGES.SERVICENOK);
+                    return;
+                }
+
                 if (!data.error) {
                     /* update the local 'model' .. */
                     device.statusobject = { status: DEVSTATUS.AVAILABLE, userobject: null };
@@ -204,6 +203,11 @@ app.controller('FilteredDeviceListController', function($scope, Data, DEVSTATUS,
 
             /* call the (VT) service to CONFIRM the concerned device .. */
             Data.post('device/status' + '?token=' + sessionStorage.userToken, confirmRequest).then(function(data) {
+                if (!data) {
+                    toastr.error(MESSAGES.SERVICENOK);
+                    return;
+                }
+
                 if (!data.error) {
                     /* update the local 'model' .. */
                     device.statusobject = { status: DEVSTATUS.INUSE, userobject: { fullname: $scope.currentuser.fullname, userid: $scope.currentuser.userid } };
@@ -217,12 +221,15 @@ app.controller('FilteredDeviceListController', function($scope, Data, DEVSTATUS,
     $scope.lockDevice = function(device) {
 
         if (device && device.statusobject && device.statusobject.status == DEVSTATUS.AVAILABLE) {
-
-            // alert($scope.currentuser.userid);
             var lockRequest = { id: device.id, statusobject: { status: DEVSTATUS.LOCKED, userobject: { userid: $scope.currentuser.userid } } };
 
             /* call the (VT) service to LOCK the concerned device .. */
             Data.post('device/status' + '?token=' + sessionStorage.userToken, lockRequest).then(function(data) {
+                if (!data) {
+                    toastr.error(MESSAGES.SERVICENOK);
+                    return;
+                }
+
                 if (!data.error) {
                     /* update the local 'model' .. */
                     device.statusobject = { status: DEVSTATUS.LOCKED, userobject: { fullname: $scope.currentuser.fullname, userid: $scope.currentuser.userid } };

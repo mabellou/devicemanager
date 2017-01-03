@@ -2,25 +2,48 @@
         <i class="fa fa-times-circle-o" style="margin:10px;color:blue;"></i>
     </button>
     <div class="modal-header">
-        <h3 class="modal-title">{{title}}</h3>
+        <h4 class="modal-title">{{title}}</h4>
     </div>
     <div class="modal-body">
         <form name="device_form" class="form-horizontal" role="form" novalidate>
-            <form-element label="REFID" mod="device">
-                <input type="text" class="form-control" name="REFID" placeholder="REFID" ng-model="device.refid" />
+            <form-element label="Box ID" mod="device">            
+                <input type="text" class="form-control" name="boxid" placeholder="enter box identifier" ng-model="device.boxid" ng-maxlength="10" ng-minlength="1" maxlength="10" required />
             </form-element>
-            <form-element label="CASE-ID" mod="device">
-                <input type="text" class="form-control" name="CASEID" placeholder="CASE-ID" ng-model="device.caseid" />
+            <form-element label="Brand" mod="device">
+                <input type="text" class="form-control" name="brand" placeholder="enter brand" ng-model="device.brand" required />
+                <!-- //todo: min & max length -->
             </form-element>
-            <form-element label="BRAND" mod="device">
-                <input type="text" name="brand" class="form-control" placeholder="BRAND" ng-model="device.brand" />
+            <form-element label="Model" mod="device">
+                <input type="text" class="form-control" name="model" placeholder="enter model" ng-model="device.model" required/>
+                <!-- //todo: min & max length -->
             </form-element>
-            <form-element label="MODEL" mod="device">
-                <input type="text" name="price" class="form-control" placeholder="MODEL" ng-model="device.model" />
+            <form-element label="OS" mod="device">
+                <input type="text" class="form-control" name="os" placeholder="enter OS" ng-model="device.os" required />
+                <!-- //todo: min & max length -->
             </form-element>
-
-           <form-element label="OS" mod="device">
-                <input type="text" name="os" class="form-control" placeholder="OS" ng-model="device.os" />
+            <form-element label="OSVersion" mod="device">
+                <input type="text" class="form-control" name="osversion" placeholder="enter OS version" ng-model="device.osversion" required />
+                <!-- //todo: min & max length -->
+            </form-element>
+            <form-element label="Screensize" mod="device">
+                <input type="text" class="form-control" name="screensize" placeholder="enter screensize" ng-model="device.screensize" required />
+                <!-- //todo: min & max length -->
+            </form-element>
+            <form-element label="Type" mod="device">
+                <input type="text" class="form-control" name="type" placeholder="enter device type" ng-model="device.type" required />
+                <!-- //todo: min & max length -->
+            </form-element>
+            <form-element label="Location" mod="device">
+                <input type="text" class="form-control" name="location" placeholder="enter location" ng-model="device.location" required />
+                <!-- //todo: min & max length -->
+            </form-element>
+            <form-element label="Wifi ID" mod="device">
+                <input type="text" class="form-control" name="wifiid" placeholder="enter wifi id" ng-model="device.wifiid" required />
+                <!-- //todo: min & max length -->
+            </form-element>
+            <form-element label="Wifi Password" mod="device">
+                <input type="text" class="form-control" name="wifipassword" placeholder="enter wifi password" ng-model="device.wifipassword" required />
+                <!-- //todo: min & max length -->
             </form-element>
 
             <div class="space"></div>
@@ -37,7 +60,7 @@
                         </button>
                     </div>
                 </form-element>
-            </div>
+            </div>    
         </form>
     </div>
 
