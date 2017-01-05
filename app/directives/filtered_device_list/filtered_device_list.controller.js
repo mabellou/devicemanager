@@ -16,7 +16,7 @@ app.controller('FilteredDeviceListController', function($scope, Data, DEVSTATUS,
     $scope.filters = {};
 
     $scope.isAdministrator = function() {
-        return $scope.currentuser.profile == USRPROFILE.ADMINISTRATOR;
+        return ENVIRONMENT.DEBUG || $scope.currentuser.profile == USRPROFILE.ADMINISTRATOR;
     };
     $scope.isBusiness = function() {
         return $scope.currentuser.profile == USRPROFILE.BUSINESS;

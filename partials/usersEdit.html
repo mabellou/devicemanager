@@ -19,8 +19,8 @@
             <input type="password" class="form-control" name="password" placeholder="enter password" ng-model="user.password" ng-maxlength="15" ng-minlength="6" maxlength="15" required />
         </form-element>
         <form-element label="Profile" mod="user">
-            <select name="profile" class="form-control" placeholder="enter profile" ng-model="user.profile">
-                <option ng-repeat="option in availableProfiles" value="{{option.id}}" ng-selected="option.name==user.profile">{{option.name}}</option>
+            <select name="profile" class="form-control" placeholder="enter profile" ng-model="user.profile" required >
+                <option ng-repeat="option in availableProfiles" value="{{option.id}}" ng-selected="option.name==user.profile">{{option.name}}</option> 
             </select>
         </form-element>        
         <form-element label="Firstname" mod="user">

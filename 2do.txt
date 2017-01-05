@@ -26,7 +26,7 @@
   [FE : N/A][BE : OK]  
                       Max. duration LOCKED per device: 15min .. 
                       >> action  : unlock device automatically (by BE ?)
-  [FE : ??][BE : ??]  
+  [FE : OK][BE : OK]  
                       Max. duration IN USE per device:
                         a.    B: 48 hrs
                         b.    T/I/S: either 5 hrs, or EOB

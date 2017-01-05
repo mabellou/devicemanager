@@ -1,66 +1,54 @@
-    <button type="button" class="close" ng-click="cancel();">
-        <i class="fa fa-times-circle-o" style="margin:10px;color:blue;"></i>
-    </button>
-    <div class="modal-header">
-        <h4 class="modal-title">{{title}}</h4>
-    </div>
-    <div class="modal-body">
-        <form name="device_form" class="form-horizontal" role="form" novalidate>
-            <form-element label="Box ID" mod="device">            
-                <input type="text" class="form-control" name="boxid" placeholder="enter box identifier" ng-model="device.boxid" ng-maxlength="10" ng-minlength="1" maxlength="10" required />
+<button type="button" class="close" ng-click="cancel();">
+    <i class="fa fa-times-circle-o" style="margin:10px;color:blue;"></i>
+</button>
+<div class="modal-header">
+    <h4 class="modal-title">{{title}}</h4>
+</div>
+<div class="modal-body">
+    <form name="device_form" class="form-horizontal" role="form" novalidate>
+        <form-element label="Box ID" mod="device">
+            <input type="number" min="1" max="9999" class="form-control" name="boxid" placeholder="enter box identifier" ng-model="device.boxid" ng-maxlength="10" ng-minlength="1" maxlength="10" required />
+        </form-element>
+        <form-element label="Brand" mod="device">
+            <input type="text" class="form-control" name="brand" placeholder="enter brand" ng-model="device.brand" ng-maxlength="20" maxlength="20" required />
+        </form-element>
+        <form-element label="Model" mod="device">
+            <input type="text" class="form-control" name="model" placeholder="enter model" ng-model="device.model" ng-maxlength="20" maxlength="20" required />
+        </form-element>
+        <form-element label="OS" mod="device">
+            <input type="text" class="form-control" name="os" placeholder="enter OS" ng-model="device.os" ng-maxlength="20" maxlength="20" required />
+        </form-element>
+        <form-element label="OS Version" mod="device">
+            <input type="text" class="form-control" name="osversion" placeholder="enter OS version" ng-model="device.osversion" ng-maxlength="20" maxlength="20" required />
+        </form-element>
+        <form-element label="Screensize" mod="device">
+            <input type="text" class="form-control" name="screensize" placeholder="enter screensize" ng-model="device.screensize" ng-maxlength="20" maxlength="20" required />
+        </form-element>
+        <form-element label="Type" mod="device">
+            <select name="type" class="form-control" placeholder="enter device type" ng-model="device.type" required >
+                <option ng-repeat="option in availableDeviceTypes" value="{{option.id}}" ng-selected="option.name==device.type">{{option.name}}</option>
+            </select>
+        </form-element>
+        <form-element label="Location" mod="device">
+            <input type="text" class="form-control" name="location" placeholder="enter location" ng-model="device.location" ng-maxlength="20" maxlength="20" />
+        </form-element>
+        <form-element label="Wifi ID" mod="device">
+            <input type="text" class="form-control" name="wifiid" placeholder="enter wifi id" ng-model="device.wifiid" ng-maxlength="20" maxlength="20" />
+        </form-element>
+        <form-element label="Wifi Password" mod="device">
+            <input type="password" class="form-control" name="wifipassword" placeholder="enter wifi password" ng-model="device.wifipassword" ng-maxlength="20" maxlength="20" />
+        </form-element>
+        <div class="space"></div>
+        <div class="space-4"></div>
+        <div class="modal-footer">
+            <form-element label="">
+                <div class="text-right">
+                    <a class="btn btn-sm" ng-click="cancel()"><i class="ace-icon fa fa-reply"></i>Cancel</a>
+                    <button ng-click="saveDevice(device);" ng-disabled="device_form.$invalid || enableUpdate" class="btn btn-sm btn-primary" type="submit">
+                        <i class="ace-icon fa fa-check"></i>{{buttonText}}
+                    </button>
+                </div>
             </form-element>
-            <form-element label="Brand" mod="device">
-                <input type="text" class="form-control" name="brand" placeholder="enter brand" ng-model="device.brand" required />
-                <!-- //todo: min & max length -->
-            </form-element>
-            <form-element label="Model" mod="device">
-                <input type="text" class="form-control" name="model" placeholder="enter model" ng-model="device.model" required/>
-                <!-- //todo: min & max length -->
-            </form-element>
-            <form-element label="OS" mod="device">
-                <input type="text" class="form-control" name="os" placeholder="enter OS" ng-model="device.os" required />
-                <!-- //todo: min & max length -->
-            </form-element>
-            <form-element label="OSVersion" mod="device">
-                <input type="text" class="form-control" name="osversion" placeholder="enter OS version" ng-model="device.osversion" required />
-                <!-- //todo: min & max length -->
-            </form-element>
-            <form-element label="Screensize" mod="device">
-                <input type="text" class="form-control" name="screensize" placeholder="enter screensize" ng-model="device.screensize" required />
-                <!-- //todo: min & max length -->
-            </form-element>
-            <form-element label="Type" mod="device">
-                <input type="text" class="form-control" name="type" placeholder="enter device type" ng-model="device.type" required />
-                <!-- //todo: min & max length -->
-            </form-element>
-            <form-element label="Location" mod="device">
-                <input type="text" class="form-control" name="location" placeholder="enter location" ng-model="device.location" required />
-                <!-- //todo: min & max length -->
-            </form-element>
-            <form-element label="Wifi ID" mod="device">
-                <input type="text" class="form-control" name="wifiid" placeholder="enter wifi id" ng-model="device.wifiid" required />
-                <!-- //todo: min & max length -->
-            </form-element>
-            <form-element label="Wifi Password" mod="device">
-                <input type="text" class="form-control" name="wifipassword" placeholder="enter wifi password" ng-model="device.wifipassword" required />
-                <!-- //todo: min & max length -->
-            </form-element>
-
-            <div class="space"></div>
-            <div class="space-4"></div>
-            <div class="modal-footer">
-                <form-element label="">
-                    <div class="text-right">
-                        <a class="btn btn-sm" ng-click="cancel()"><i class="ace-icon fa fa-reply"></i>Cancel</a>
-                        <button ng-click="saveDevice(device);"
-                                ng-disabled="device_form.$invalid || enableUpdate"
-                                class="btn btn-sm btn-primary"
-                                type="submit">
-                            <i class="ace-icon fa fa-check"></i>{{buttonText}}
-                        </button>
-                    </div>
-                </form-element>
-            </div>    
-        </form>
-    </div>
-
+        </div>
+    </form>
+</div>

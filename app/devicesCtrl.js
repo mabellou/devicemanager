@@ -202,7 +202,7 @@ app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $inte
     */
 });
 
-app.controller('deviceCreateCtrl', function($scope, $modalInstance, item, Data, USRPROFILE, ENVIRONMENT, toastr, Common, MESSAGES) {
+app.controller('deviceCreateCtrl', function($scope, $modalInstance, item, Data, USRPROFILE, ENVIRONMENT, toastr, Common, MESSAGES, DEVTYPE) {
 
     $scope.device = angular.copy(item);
 
@@ -219,8 +219,12 @@ app.controller('deviceCreateCtrl', function($scope, $modalInstance, item, Data, 
         return angular.equals(original, $scope.device);
     }
 
+    $scope.availableDeviceTypes = [
+        { id: DEVTYPE.SMARTPHONE, name: DEVTYPE.SMARTPHONE },
+        { id: DEVTYPE.TABLET, name: DEVTYPE.TABLET },
+    ];
+
     $scope.saveDevice = function(device) {
-        // .. device.status = 'Available';
         Data.post('device?token=' + sessionStorage.userToken, device).then(function(result) {
             if (!result) {
                 toastr.error(MESSAGES.SERVICENOK);

@@ -201,8 +201,9 @@ app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, US
     }
 
     $scope.saveUser = function(user) {
+
         // user.enddate is passed as yyyy-MM-dd but should become dd/MM/yyyy :
-        //todo: delegate the following to a common service ?!
+        //todo: delegate the following to a common service || use momentjs ?!
         if (user.enddate) {
             var dt = user.enddate.substr(8, 2) + '/' + user.enddate.substr(5, 2) + '/' + user.enddate.substr(0, 4);
             user.enddate = dt;
