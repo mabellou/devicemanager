@@ -2,6 +2,7 @@ app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $inte
 
     $scope.currentuser = {};
     $scope.devices = {};
+    $scope.device = {};
 
     $interval(function() { $scope.callAtInterval(); }, (ENVIRONMENT.DEBUG ? 60000 : CONFIG.REFRESHINTERVAL));
 
@@ -31,25 +32,6 @@ app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $inte
         });
     };
 
-    /* $scope.create = function (p,size) {
-        var modalInstance = $modal.open({
-          templateUrl: 'partials/devicesEdit.html',
-          controller: 'deviceCreateCtrl',
-          size: size,
-          resolve: {
-            item: function () {
-              return p;
-            }
-          }
-        });
-        modalInstance.result.then(function(selectedObject) {
-                delete selectedObject.save;
-                delete selectedObject.id;
-                $scope.devices.push(selectedObject);
-                $scope.devices = $filter('orderBy')($scope.devices, 'caseid');
-        });
-    }; */
-
     $scope.create = function(p, size) {
         var modalInstance = $modal.open({
             templateUrl: 'partials/devicesEdit.html',
@@ -64,7 +46,6 @@ app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $inte
         modalInstance.result.then(function(selectedObject) {
             if (selectedObject) {
                 delete selectedObject.save;
-                //todo: ?? delete selectedObject.id;
                 $scope.devices.push(selectedObject);
                 $scope.devices = $filter('orderBy')($scope.devices, 'caseid', 'reverse');
             }
@@ -130,7 +111,7 @@ app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $inte
     };
 
     /* NOT YET SUPPORTED
-        $scope.changeDeviceStatus = function(device) {
+    $scope.changeDeviceStatus = function(device) {
             console.log('devicesCtrl.changeDeviceStatus() : NOT SUPPORTED!');
             return;
             
@@ -170,36 +151,16 @@ app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $inte
                     device.name = selectedObject.name;
                 });
             }
-        };
-
-        $scope.deleteDevice = function(device){
+    };
+    $scope.deleteDevice = function(device){
             if(confirm("Are you sure to remove the device")){
                 Data.delete("devices/"+device.refid).then(function(result){
                     $scope.devices = _.without($scope.devices, _.findWhere($scope.devices, {refid:device.refid}));
                 });
             }
         };
-
-        $scope.open = function (p,size) {
-            var modalInstance = $modal.open({
-              templateUrl: 'partials/devicesEdit.html',
-              controller: 'deviceEditCtrl',
-              size: size,
-              resolve: {
-                item: function () {
-                  return p;
-                }
-              }
-            });
-            modalInstance.result.then(function(selectedObject) {
-                    p.refid = selectedObject.refid;
-                    p.caseid = selectedObject.caseid;
-                    p.brand = selectedObject.brand;
-                    p.model = selectedObject.model;
-                    p.os = selectedObject.os;
-            });
-        }; 
     */
+
 });
 
 app.controller('deviceCreateCtrl', function($scope, $modalInstance, item, Data, USRPROFILE, ENVIRONMENT, toastr, Common, MESSAGES, DEVTYPE) {
@@ -219,10 +180,8 @@ app.controller('deviceCreateCtrl', function($scope, $modalInstance, item, Data, 
         return angular.equals(original, $scope.device);
     }
 
-    $scope.availableDeviceTypes = [
-        { id: DEVTYPE.SMARTPHONE, name: DEVTYPE.SMARTPHONE },
-        { id: DEVTYPE.TABLET, name: DEVTYPE.TABLET },
-    ];
+    $scope.availableDeviceTypes = Common.GetDeviceTypes();
+    $scope.availableProfiles = Common.GetProfiles();
 
     $scope.saveDevice = function(device) {
         Data.post('device?token=' + sessionStorage.userToken, device).then(function(result) {
@@ -240,42 +199,65 @@ app.controller('deviceCreateCtrl', function($scope, $modalInstance, item, Data, 
                 d.save = 'insert';
                 d.id = parseInt(result.data);
 
-                $modalInstance.close(x);
+                $modalInstance.close(d);
+            }
+        });
+    };
+});
+
+app.controller('deviceEditCtrl', function($scope, $modalInstance, item, Data, USRPROFILE, MESSAGES, ENVIRONMENT, toastr, Common, DEVTYPE) {
+
+    $scope.device = angular.copy(item);
+
+    $scope.availableDeviceTypes = Common.GetDeviceTypes();
+    $scope.availableProfiles = Common.GetProfiles();
+
+    $scope.cancel = function() {
+        $modalInstance.dismiss('Close');
+    };
+
+    $scope.action = 'editdevice';
+    $scope.title = 'Edit Device';
+    $scope.buttonText = 'Update Device';
+
+    var original = item;
+    $scope.isClean = function() {
+        return angular.equals(original, $scope.device);
+    }
+
+    $scope.saveDevice = function(device) {
+        // var devicetemp = angular.copy(device);
+        // delete devicetemp.name;
+
+        Data.put('device/' + device.id + '?token=' + sessionStorage.userToken, device).then(function(result) {
+            if (!result) {
+                toastr.error(MESSAGES.SERVICENOK);
+                return;
+            }
+
+            if (result.error) {
+                toastr.warning('Technical problem with "updating" existing device ' + device.boxid + Common.GetErrorMessage(ENVIRONMENT.DEBUG, result.error));
+                $modalInstance.close(null);
+            } else {
+                var d = angular.copy(device);
+
+                d.save = 'update';
+
+                toastr.info('Device ' + d.boxid + ' is updated !');
+
+                $modalInstance.close(d);
             }
         });
     };
 });
 
 
-/* NOT YET SUPPORTED
-app.controller('deviceEditCtrl', function ($scope, $modalInstance, item, Data) {
 
-  $scope.device = angular.copy(item);
-        
-        $scope.cancel = function () {
-            $modalInstance.dismiss('Close');
-        };
-        $scope.title = 'Edit Device' ;
-        $scope.buttonText = 'Update Device';
 
-        var original = item;
-        $scope.isClean = function() {
-            return angular.equals(original, $scope.device);
-        }
-        $scope.saveDevice = function (device) {
-                var devicetemp = angular.copy(device);
-                delete devicetemp.name;
-                Data.put('devices/'+devicetemp.refid, devicetemp).then(function (result) {
-                    if(result.status != 'error'){
-                        var x = angular.copy(device);
-                        $modalInstance.close(x);
-                    }else{
-                        console.log(result);
-                    }
-                });
-        };
-});
 
+
+
+/*
 app.controller('userLinkCtrl', function ($scope, $modalInstance, item, Data) {
 
   $scope.device = angular.copy(item.device);

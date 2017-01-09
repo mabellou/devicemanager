@@ -1,5 +1,6 @@
-app.controller('FilteredDeviceListController', function($scope, Data, DEVSTATUS, CONFIG, USRPROFILE, ENVIRONMENT, DEVTYPE, toastr, moment, Common, MESSAGES) {
+app.controller('FilteredDeviceListController', function($scope, $modal, Data, DEVSTATUS, CONFIG, USRPROFILE, ENVIRONMENT, DEVTYPE, toastr, moment, Common, MESSAGES) {
 
+    // define the visible columns in the list of devices :
     $scope.columns = [
         { text: "Box ID", predicate: "boxid", sortable: true, dataType: "number" },
         { text: "Brand", predicate: "brand", sortable: true },
@@ -85,10 +86,10 @@ app.controller('FilteredDeviceListController', function($scope, Data, DEVSTATUS,
         //  b.    Tester || Incubator || Savi user : either 5 hrs, or EOB aka 19.00 PM
 
         // but first check if this constraint makes sense ? :
-        var filteredStatusLockedOrInUse = (filteredStatus == DEVSTATUS.LOCKED || 
-                                            filteredStatus == DEVSTATUS.INUSE);
-        var deviceStatusLockedOrInUse = (device.statusobject.status == DEVSTATUS.LOCKED || 
-                                            device.statusobject.status == DEVSTATUS.INUSE);
+        var filteredStatusLockedOrInUse = (filteredStatus == DEVSTATUS.LOCKED ||
+            filteredStatus == DEVSTATUS.INUSE);
+        var deviceStatusLockedOrInUse = (device.statusobject.status == DEVSTATUS.LOCKED ||
+            device.statusobject.status == DEVSTATUS.INUSE);
         if (!(filteredStatusLockedOrInUse || deviceStatusLockedOrInUse)) return false;
 
         // get the maximum hours a device can be in use by a Tester || Incubator || Savi teammember :
@@ -104,7 +105,7 @@ app.controller('FilteredDeviceListController', function($scope, Data, DEVSTATUS,
         */
 
         if (device.statusobject && device.statusobject.statusdate) {
-            
+
             var statusdate = moment(device.statusobject.statusdate, 'DD/MM/YYYY hh:mm:ss');
 
             // is current user member of the 'business' team ?
@@ -129,23 +130,85 @@ app.controller('FilteredDeviceListController', function($scope, Data, DEVSTATUS,
                 var statusdateEOB = moment(statusdate)
                     .set({ hour: hourEoB, minute: minuteEoB, second: secondEoB })
                     .toDate();
-                
+
                 // compare statusdateplus with now (= actual datetime) .. 
                 // if now > statusdateplus or now > statusdateEOB then return true else false :
                 return moment().isAfter(statusdateplus) || moment().isAfter(statusdateEOB);
-            } 
+            }
         }
 
         // return false as default!                         
         return false;
     };
-    
+
     $scope.formatStatus = function(status) {
         return status == DEVSTATUS.INUSE ? 'in use' : status;
     };
 
+    $scope.deviceIsFree = function(device) {
+        return (device.statusobject.status != DEVSTATUS.INUSE && device.statusobject.status != DEVSTATUS.LOCKED);
+    }
+
+    $scope.open = function(p, size) {
+        var modalInstance = $modal.open({
+            templateUrl: 'partials/devicesEdit.html',
+            controller: 'deviceEditCtrl',
+            size: size,
+            resolve: {
+                item: function() {
+                    return p;
+                }
+            }
+        });
+        modalInstance.result.then(function(selectedObject) {
+            if (selectedObject) {
+                p.boxid = selectedObject.boxid;
+                p.brand = selectedObject.brand;
+                p.model = selectedObject.model;
+                p.os = selectedObject.os;
+                p.osversion = selectedObject.osversion;
+                p.screensize = selectedObject.screensize;
+                p.type = selectedObject.type;
+                p.profile = selectedObject.profile;
+                p.location = selectedObject.location;
+                p.wifiid = selectedObject.wifiid;
+                p.wifipassword = selectedObject.wifipassword;
+                p.comments = selectedObject.comments;
+                p.badgeid = selectedObject.badgeid;
+                p.imei = selectedObject.imei;
+                p.serialnumber = selectedObject.serialnumber;
+            }
+        });
+    };
+
     $scope.clearFilters = function() {
         $scope.filters = {};
+    };
+
+    $scope.deleteDevice = function(device) {
+        
+        if (!confirm('Are you sure to remove the device ' + device.boxid + ' ?')) 
+            return;
+
+        if (device && device.statusobject && device.statusobject.status == DEVSTATUS.AVAILABLE) {
+            // !! deleting a device is a logical delete where the (device) status will become deleted ..    
+            var deleteRequest = { id: device.id, statusobject: { status: DEVSTATUS.DELETED, userobject: null } };
+
+            /* call the (VT) service to DELETE the concerned device .. */
+            Data.post('device/status' + '?token=' + sessionStorage.userToken, deleteRequest).then(function(data) {
+                if (!data) {
+                    toastr.error(MESSAGES.SERVICENOK);
+                    return;
+                }
+
+                if (!data.error) {
+                    /* update the local 'model' .. */
+                    device.statusobject = { status: DEVSTATUS.DELETED, userobject: null };
+                    toastr.info('Device ' + device.boxid + '   ' + device.brand + ' ' + device.model + ' was "deleted" !');
+                } else
+                    toastr.warning('Technical problem with "deleting" device ' + device.boxid + Common.GetErrorMessage(ENVIRONMENT.DEBUG, data.error));
+            });
+        };
     };
 
     $scope.returnDevice = function(device) {

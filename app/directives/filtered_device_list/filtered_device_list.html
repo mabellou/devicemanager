@@ -125,8 +125,8 @@
                     <button type="button" class="btn btn-primary btn-sm" ng-disabled="lockDisabled()" ng-click="lockDevice(c);">Lock</button>
                 </div>
             </div>
-            <!-- As Administrator I can EDIT or DELETE a device : -->
-            <div class="btn-group" ng-show="isAdministrator()">
+            <!-- As Administrator I can EDIT or DELETE a device, IF device is 'free' : -->
+            <div class="btn-group" ng-show="isAdministrator() && deviceIsFree(c)">
                 <button type="button" class="btn btn-default fa fa-edit" ng-click="open(c);"></button>
                 <button type="button" class="btn btn-danger fa fa-trash-o" ng-click="deleteDevice(c);"></button>
             </div>

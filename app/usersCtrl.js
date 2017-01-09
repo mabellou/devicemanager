@@ -33,7 +33,7 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
 
     $scope.deleteUser = function(user) {
 
-        // !! deleting user is a logical delete where the enddate will be set equal to today
+        // !! deleting a user is a logical delete where the enddate will be set equal to today
         var user2delete = angular.copy(user);
 
         var username = user2delete.firstname + ' ' + user2delete.lastname;
@@ -162,6 +162,7 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
         }
     }
 
+    // define the visible columns in the list of users :
     $scope.columns = [{ text: "Badge ID", predicate: "badgeid", sortable: true, dataType: "number" },
         { text: "Name", predicate: "fullname", sortable: true },
         { text: "Profile", predicate: "profile", sortable: true },
@@ -179,13 +180,16 @@ app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, US
     var today = new Date();
     $scope.date = today.toISOString();
 
-    $scope.availableProfiles = [
+    $scope.availableProfiles = Common.GetProfiles();
+    /*
+    [
         { id: USRPROFILE.ADMINISTRATOR, name: USRPROFILE.ADMINISTRATOR },
         { id: USRPROFILE.TESTER, name: USRPROFILE.TESTER },
         { id: USRPROFILE.INCUBATOR, name: USRPROFILE.INCUBATOR },
         { id: USRPROFILE.SAVI, name: USRPROFILE.SAVI },
         { id: USRPROFILE.BUSINESS, name: USRPROFILE.BUSINESS },
     ];
+    */
 
     $scope.cancel = function() {
         $modalInstance.dismiss('Close');
@@ -235,7 +239,7 @@ app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, US
     };
 });
 
-app.controller('userEditCtrl', function($scope, $modalInstance, item, Data, USRPROFILE, MESSAGES, toastr) {
+app.controller('userEditCtrl', function($scope, $modalInstance, item, Data, USRPROFILE, MESSAGES, toastr, Common) {
 
     $scope.user = angular.copy(item);
 
@@ -248,13 +252,7 @@ app.controller('userEditCtrl', function($scope, $modalInstance, item, Data, USRP
     if (enddate)
         $scope.user.enddate = enddate.substr(6, 4) + '-' + enddate.substr(3, 2) + '-' + enddate.substr(0, 2);
 
-    $scope.availableProfiles = [
-        { id: USRPROFILE.ADMINISTRATOR, name: USRPROFILE.ADMINISTRATOR },
-        { id: USRPROFILE.TESTER, name: USRPROFILE.TESTER },
-        { id: USRPROFILE.INCUBATOR, name: USRPROFILE.INCUBATOR },
-        { id: USRPROFILE.SAVI, name: USRPROFILE.SAVI },
-        { id: USRPROFILE.BUSINESS, name: USRPROFILE.BUSINESS },
-    ];
+    $scope.availableProfiles = Common.GetProfiles();
 
     $scope.cancel = function() {
         $modalInstance.dismiss('Close');
