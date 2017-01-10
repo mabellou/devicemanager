@@ -37,16 +37,25 @@
   
 
 
+(1) ** asap:
+-OK- user.badgeid : maxlength = 20!
+-OK- sort expression 'caseid' >> 'boxid'
+-OK- filterOnStatus() .. device.statusobject.userobject == null when new device has been created ..
+-??- model delete confirmation .. via user-friendly popup dialog ?! :  
+      -- modal confirmation via : http://angular-ui.github.io/bootstrap/#/modal
+   
+
+
 (2) ** alignment of list-columns : 
       -- List (devices && users) columns must be aligned
       -- List Devices .. devices inuse && locked should be aligned vertically with list #3
+   
+(3) °° nice to haves :
 
-(3) ** complete Edit & Delete User(s) aka CRUD operations on Users & Devices ..
-    -- modal confirmation via : http://angular-ui.github.io/bootstrap/#/modal
-    -- QUID ErrorMessages (= HTTP 200 ?!) returned by BackEnd ?? .. check refactored ErrorMessages returned by BE = Slack message by Marwan
+      -- FE : add new user : property 'enddate' should be greater than today
+      -- FE : main menu-option Users is only enabled for Users with profile == administrator
+      -- FE : delegate the toastr calls into a seperate nodification 'class' : service, facory or provider ?
 
-    
-(4) ** implementation of Create, Edit & Delete Device(s)
 
 
 
@@ -82,22 +91,14 @@
 
 -- how to communicate between the badge and the user
 
-
-
-** Nice to have :
-
--- FE : add new user : property 'enddate' should be greater than today
--- FE : main menu-option Users is only enabled for Users with profile == administrator
--- FE : delegate the toastr calls into a seperate nodification 'class' : service, facory or provider ?
-
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 ** Questions / 2check :
 
 ° Quid a BUILD app approach based on Grunt/Gulp or Webpack ?!
 
-°°° quid the actions (lock, unlock, confirm & return) buttons for administrators ?? ... can an administrator also play the role of a tester, of a .. ??
+° quid the actions (lock, unlock, confirm & return) buttons for administrators ?? ... can an administrator also play the role of a tester, of a .. ?? : NO 
 
 
 * After Care ??

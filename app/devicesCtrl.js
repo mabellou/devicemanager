@@ -47,7 +47,7 @@ app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $inte
             if (selectedObject) {
                 delete selectedObject.save;
                 $scope.devices.push(selectedObject);
-                $scope.devices = $filter('orderBy')($scope.devices, 'caseid', 'reverse');
+                $scope.devices = $filter('orderBy')($scope.devices, 'boxid', 'reverse');
             }
         });
     };
@@ -160,10 +160,9 @@ app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $inte
             }
         };
     */
-
 });
 
-app.controller('deviceCreateCtrl', function($scope, $modalInstance, item, Data, USRPROFILE, ENVIRONMENT, toastr, Common, MESSAGES, DEVTYPE) {
+app.controller('deviceCreateCtrl', function($scope, $modalInstance, item, Data, USRPROFILE, ENVIRONMENT, toastr, Common, MESSAGES, DEVTYPE, DEVSTATUS) {
 
     $scope.device = angular.copy(item);
 
@@ -184,22 +183,26 @@ app.controller('deviceCreateCtrl', function($scope, $modalInstance, item, Data, 
     $scope.availableProfiles = Common.GetProfiles();
 
     $scope.saveDevice = function(device) {
-        Data.post('device?token=' + sessionStorage.userToken, device).then(function(result) {
+
+        var device2Save = angular.copy(device);
+
+        Data.post('device?token=' + sessionStorage.userToken, device2Save).then(function(result) {
             if (!result) {
                 toastr.error(MESSAGES.SERVICENOK);
                 return;
             }
 
             if (result.error) {
-                toastr.warning('Technical problem with "creating" new device ' + device.caseid + Common.GetErrorMessage(ENVIRONMENT.DEBUG, result.error));
+                toastr.warning('Technical problem with "creating" new device ' + device2Save.boxid + Common.GetErrorMessage(ENVIRONMENT.DEBUG, result.error));
                 $modalInstance.close(null);
             } else {
-                var d = angular.copy(device);
+                device2Save.save = 'insert';
+                device2Save.id = parseInt(result.id);
 
-                d.save = 'insert';
-                d.id = parseInt(result.data);
+                device2Save.statusobject = {};
+                device2Save.statusobject.status = DEVSTATUS.AVAILABLE;
 
-                $modalInstance.close(d);
+                $modalInstance.close(device2Save);
             }
         });
     };

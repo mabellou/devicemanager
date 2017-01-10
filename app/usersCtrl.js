@@ -35,7 +35,6 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
 
         // !! deleting a user is a logical delete where the enddate will be set equal to today
         var user2delete = angular.copy(user);
-
         var username = user2delete.firstname + ' ' + user2delete.lastname;
 
         if (confirm('Are you sure to remove the user ' + username + ' ?')) {
@@ -102,7 +101,6 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
 
     /* authenticate the 'current user' ?! .. */
     if (!sessionStorage.userToken || sessionStorage.userToken == '') {
-        /* var credentials = { username : 'marcvermeir', password : 'azerty' }; */
         var credentials = Creds.getCredentials();
         if (credentials.username == '' || credentials.password == '') {
             $location.path('/login');
@@ -181,15 +179,6 @@ app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, US
     $scope.date = today.toISOString();
 
     $scope.availableProfiles = Common.GetProfiles();
-    /*
-    [
-        { id: USRPROFILE.ADMINISTRATOR, name: USRPROFILE.ADMINISTRATOR },
-        { id: USRPROFILE.TESTER, name: USRPROFILE.TESTER },
-        { id: USRPROFILE.INCUBATOR, name: USRPROFILE.INCUBATOR },
-        { id: USRPROFILE.SAVI, name: USRPROFILE.SAVI },
-        { id: USRPROFILE.BUSINESS, name: USRPROFILE.BUSINESS },
-    ];
-    */
 
     $scope.cancel = function() {
         $modalInstance.dismiss('Close');
@@ -206,34 +195,34 @@ app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, US
 
     $scope.saveUser = function(user) {
 
-        // user.enddate is passed as yyyy-MM-dd but should become dd/MM/yyyy :
-        //todo: delegate the following to a common service || use momentjs ?!
-        if (user.enddate) {
-            var dt = user.enddate.substr(8, 2) + '/' + user.enddate.substr(5, 2) + '/' + user.enddate.substr(0, 4);
-            user.enddate = dt;
+        var user2Save = angular.copy(user);
+    
+        // (user) enddate is passed as yyyy-MM-dd but should become dd/MM/yyyy :
+//todo: delegate the following to a common service || use momentjs ?!
+        if (user2Save.enddate) {
+            var dt = user2Save.enddate.substr(8, 2) + '/' + user2Save.enddate.substr(5, 2) + '/' + user2Save.enddate.substr(0, 4);
+            user2Save.enddate = dt;
         }
 
-        Data.post('user?token=' + sessionStorage.userToken, user).then(function(result) {
+        Data.post('user?token=' + sessionStorage.userToken, user2Save).then(function(result) {
             if (!result) {
                 toastr.error(MESSAGES.SERVICENOK);
                 return;
             }
 
             if (result.error) {
-                toastr.warning('Technical problem with "creating" new user ' + user.username + Common.GetErrorMessage(ENVIRONMENT.DEBUG, result.error));
+                toastr.warning('Technical problem with "creating" new user ' + user2Save.username + Common.GetErrorMessage(ENVIRONMENT.DEBUG, result.error));
                 $modalInstance.close(null);
 
             } else {
-                var u = angular.copy(user);
+                user2Save.fullname = user2Save.firstname + ' ' + user2Save.lastname;
 
-                u.fullname = u.firstname + ' ' + u.lastname;
+                user2Save.save = 'insert';
+                user2Save.id = parseInt(result.id);
 
-                u.save = 'insert';
-                u.id = parseInt(result.data);
+                toastr.info('User ' + user2Save.fullname + ' is created !');
 
-                toastr.info('User ' + u.fullname + ' is created !');
-
-                $modalInstance.close(u);
+                $modalInstance.close(user2Save);
             }
         });
     };
@@ -243,14 +232,15 @@ app.controller('userEditCtrl', function($scope, $modalInstance, item, Data, USRP
 
     $scope.user = angular.copy(item);
 
-    var today = new Date();
-    $scope.date = today.toISOString();
-
-    // user.enddate in format 'dd/MM/yyyy' needs to be converted into format 'yyyy-MM-dd' :
-    //todo: delegate the following to a common service ?!
+    // (user) enddate in format 'dd/MM/yyyy' needs to be converted again
+    // into format 'yyyy-MM-dd', the latter format acts as input 4 the datepicker :
+//todo: delegate the following to a common service ?!
     var enddate = $scope.user.enddate;
     if (enddate)
         $scope.user.enddate = enddate.substr(6, 4) + '-' + enddate.substr(3, 2) + '-' + enddate.substr(0, 2);
+
+    var today = new Date();
+    $scope.date = today.toISOString();
 
     $scope.availableProfiles = Common.GetProfiles();
 
@@ -269,33 +259,33 @@ app.controller('userEditCtrl', function($scope, $modalInstance, item, Data, USRP
 
     $scope.saveUser = function(user) {
 
-        // user.enddate is passed as yyyy-MM-dd but should become dd/MM/yyyy :
-        //todo: delegate the following to a common service ?!
-        if (user.enddate) {
-            var dt = user.enddate.substr(8, 2) + '/' + user.enddate.substr(5, 2) + '/' + user.enddate.substr(0, 4);
-            user.enddate = dt;
+        var user2Save = angular.copy(user);
+    
+        // (user) enddate is passed as yyyy-MM-dd but should become dd/MM/yyyy :
+//todo: delegate the following to a common service || use momentjs ?!
+        if (user2Save.enddate) {
+            var dt = user2Save.enddate.substr(8, 2) + '/' + user2Save.enddate.substr(5, 2) + '/' + user2Save.enddate.substr(0, 4);
+            user2Save.enddate = dt;
         }
 
-        Data.put('user/' + user.id + '?token=' + sessionStorage.userToken, user).then(function(result) {
+        Data.put('user/' + user2Save.id + '?token=' + sessionStorage.userToken, user2Save).then(function(result) {
             if (!result) {
                 toastr.error(MESSAGES.SERVICENOK);
                 return;
             }
 
             if (result.error) {
-                toastr.warning('Technical problem with "updating" existing user ' + user.username + Common.GetErrorMessage(ENVIRONMENT.DEBUG, result.error));
+                toastr.warning('Technical problem with "updating" existing user ' + user2Save.username + Common.GetErrorMessage(ENVIRONMENT.DEBUG, result.error));
                 $modalInstance.close(null);
 
             } else {
-                var u = angular.copy(user);
+                user2Save.fullname = user2Save.firstname + ' ' + user2Save.lastname;
 
-                u.fullname = u.firstname + ' ' + u.lastname;
+                user2Save.save = 'update';
 
-                u.save = 'update';
+                toastr.info('User ' + user2Save.fullname + ' is updated !');
 
-                toastr.info('User ' + u.fullname + ' is updated !');
-
-                $modalInstance.close(u);
+                $modalInstance.close(user2Save);
             }
         });
     };

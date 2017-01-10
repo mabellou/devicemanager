@@ -10,7 +10,7 @@
         <!-- //todo: class == user_form-control || form-control ? -->
 
         <form-element label="Badge ID" mod="user">            
-            <input type="text" class="form-control" name="badgeid" placeholder="enter badge identifier" ng-model="user.badgeid" ng-maxlength="10" ng-minlength="1" maxlength="10" required />
+            <input type="text" class="form-control" name="badgeid" placeholder="enter badge identifier" ng-model="user.badgeid" ng-maxlength="20" ng-minlength="1" maxlength="20" required />
         </form-element>
         <form-element label="Username" mod="user">
             <input type="text" class="form-control" name="username" placeholder="enter username" ng-model="user.username" ng-maxlength="15" maxlength="15" required />
@@ -30,7 +30,7 @@
             <input type="text" name="lastname" class="form-control" placeholder="enter lastname" ng-model="user.lastname" ng-maxlength="20" maxlength="20" required />
         </form-element>
         <form-element label="Active until" mod="user">
-            <input type="date" name="enddate" class="form-control" placeholder="enter date : active until" ng-model="user.enddate" min="{{date | date:'yyyy-MM-dd'}}" />
+            <input type="date" name="enddate" class="form-control" placeholder="enter date : active until" ng-model="user.enddate" min="{{date | date:'yyyy-MM-dd'}}" onkeydown="return false;" />
          
             <span ng-show="user_form.enddate.$error.min">End Date should not be less than current date</span>
         </form-element>

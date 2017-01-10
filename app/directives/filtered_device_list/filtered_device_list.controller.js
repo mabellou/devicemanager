@@ -75,7 +75,8 @@ app.controller('FilteredDeviceListController', function($scope, $modal, Data, DE
             if (status == DEVSTATUS.LOCKED || status == DEVSTATUS.INUSE)
                 return (device.statusobject.userobject && device.statusobject.userobject.userid == $scope.currentuser.userid) && (device.statusobject.status === status);
             else
-                return (!device.statusobject.userobject || device.statusobject.userobject.userid !== $scope.currentuser.userid);
+                //// return (!device.statusobject.userobject || device.statusobject.userobject.userid !== $scope.currentuser.userid);
+                return (!device.statusobject.userobject || (device.statusobject.userobject && device.statusobject.userobject.userid !== $scope.currentuser.userid));
         }
     };
 
@@ -146,7 +147,9 @@ app.controller('FilteredDeviceListController', function($scope, $modal, Data, DE
     };
 
     $scope.deviceIsFree = function(device) {
-        return (device.statusobject.status != DEVSTATUS.INUSE && device.statusobject.status != DEVSTATUS.LOCKED);
+        return (device.statusobject.status != DEVSTATUS.INUSE && 
+                device.statusobject.status != DEVSTATUS.LOCKED &&
+                device.statusobject.status != DEVSTATUS.DELETED);
     }
 
     $scope.open = function(p, size) {
