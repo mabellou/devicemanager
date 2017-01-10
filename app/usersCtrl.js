@@ -15,6 +15,7 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
     };
 
     $scope.fetchUsers = function(notifyUser) {
+
         Data.get('users?token=' + sessionStorage.userToken).then(function(data) {
             if (!data) {
                 toastr.error(MESSAGES.SERVICENOK);
@@ -25,35 +26,35 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
                 $scope.users = data;
                 if (notifyUser)
                     toastr.success('Users were loaded successfully!');
-            } else
-            if (notifyUser)
-                toastr.warning('Technical problem with fetching users!' + Common.GetErrorMessage(ENVIRONMENT.DEBUG, data.error));
+            } else {
+                if (notifyUser)
+                    toastr.warning('Technical problem with fetching users!' + Common.GetErrorMessage(ENVIRONMENT.DEBUG, data.error));
+            }
         });
     };
 
-    $scope.deleteUser = function(user) {
+    $scope.deleteUser = function(user, size) {
 
         // !! deleting a user is a logical delete where the enddate will be set equal to today
-        var user2delete = angular.copy(user);
-        var username = user2delete.firstname + ' ' + user2delete.lastname;
+        //// var user2delete = angular.copy(user);
+        //// var username = user2delete.firstname + ' ' + user2delete.lastname;
 
-        if (confirm('Are you sure to remove the user ' + username + ' ?')) {
-            // set the user's enddate equal to today :
-            user2delete.enddate = moment().format('DD/MM/YYYY');
-            
-            Data.put('user/' + user2delete.id + '?token=' + sessionStorage.userToken, user2delete).then(function(result) {
-                if (!result) {
-                    toastr.error(MESSAGES.SERVICENOK);
-                    return;
+        var modalInstance = $modal.open({
+            templateUrl: 'partials/userDelete.html',
+            controller: 'userDeleteCtrl',
+            size: size,
+            resolve: {
+                item: function() {
+                    return user;
                 }
-
-                if (result.error) {
-                    toastr.warning('Technical problem with "deleting" the user ' + user2delete.username + Common.GetErrorMessage(ENVIRONMENT.DEBUG, result.error));
-                } else {
-                    toastr.info('User ' + username + ' was removed successfully !');
-                };
-            });
-        };
+            }
+        });
+        modalInstance.result.then(function(selectedObject) {
+            if (selectedObject) {
+                // update the 'model' : only the enddate is filled in with the current date :
+                user.enddate = selectedObject.enddate;
+            }
+        });
     };
 
     $scope.create = function(p, size) {
@@ -171,6 +172,44 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
     ];
 });
 
+app.controller('userDeleteCtrl', function($scope, $modalInstance, item, Data, toastr) {
+
+    $scope.user = angular.copy(item);
+    $scope.user.fullname = $scope.user.firstname + ' ' + $scope.user.lastname;
+
+    $scope.action = 'deleteuser';
+    $scope.title = 'Delete User'; 
+    $scope.buttonText = 'Delete User';
+
+    $scope.confirm = function(user) {
+
+        var user2Delete = angular.copy(user);
+
+        // set the user's enddate equal to today :
+        user2Delete.enddate = moment().format('DD/MM/YYYY');
+
+        Data.put('user/' + user2Delete.id + '?token=' + sessionStorage.userToken, user2Delete).then(function(result) {
+            if (!result) {
+                toastr.error(MESSAGES.SERVICENOK);
+                return;
+            };
+
+            if (result.error) {
+                toastr.warning('Technical problem with "deleting" user ' + user2Delete.fullname + Common.GetErrorMessage(ENVIRONMENT.DEBUG, result.error));
+                $modalInstance.close(null);
+            } else {
+                toastr.info('User ' + user2Delete.fullname + ' was removed successfully !');
+
+                $modalInstance.close(user2Delete);
+            };
+        });
+    };
+
+    $scope.cancel = function() {
+        $modalInstance.dismiss('Close');
+    };
+});
+
 app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, USRPROFILE, ENVIRONMENT, toastr, Common, MESSAGES) {
 
     $scope.user = angular.copy(item);
@@ -196,9 +235,9 @@ app.controller('userCreateCtrl', function($scope, $modalInstance, item, Data, US
     $scope.saveUser = function(user) {
 
         var user2Save = angular.copy(user);
-    
+
         // (user) enddate is passed as yyyy-MM-dd but should become dd/MM/yyyy :
-//todo: delegate the following to a common service || use momentjs ?!
+        //todo: delegate the following to a common service || use momentjs ?!
         if (user2Save.enddate) {
             var dt = user2Save.enddate.substr(8, 2) + '/' + user2Save.enddate.substr(5, 2) + '/' + user2Save.enddate.substr(0, 4);
             user2Save.enddate = dt;
@@ -234,7 +273,7 @@ app.controller('userEditCtrl', function($scope, $modalInstance, item, Data, USRP
 
     // (user) enddate in format 'dd/MM/yyyy' needs to be converted again
     // into format 'yyyy-MM-dd', the latter format acts as input 4 the datepicker :
-//todo: delegate the following to a common service ?!
+    //todo: delegate the following to a common service ?!
     var enddate = $scope.user.enddate;
     if (enddate)
         $scope.user.enddate = enddate.substr(6, 4) + '-' + enddate.substr(3, 2) + '-' + enddate.substr(0, 2);
@@ -260,9 +299,9 @@ app.controller('userEditCtrl', function($scope, $modalInstance, item, Data, USRP
     $scope.saveUser = function(user) {
 
         var user2Save = angular.copy(user);
-    
+
         // (user) enddate is passed as yyyy-MM-dd but should become dd/MM/yyyy :
-//todo: delegate the following to a common service || use momentjs ?!
+        //todo: delegate the following to a common service || use momentjs ?!
         if (user2Save.enddate) {
             var dt = user2Save.enddate.substr(8, 2) + '/' + user2Save.enddate.substr(5, 2) + '/' + user2Save.enddate.substr(0, 4);
             user2Save.enddate = dt;
