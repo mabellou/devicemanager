@@ -204,8 +204,7 @@ app.controller('FilteredDeviceListController', function($scope, $modal, Data, DE
         });
         modalInstance.result.then(function(selectedObject) {
             if (selectedObject) {
-                // update the 'model' : .. //TODO:
-                
+                device.statusobject = selectedObject.statusobject;
             }
         });
     };

@@ -4,7 +4,7 @@ app.constant('DEVSTATUS', { 'AVAILABLE': 'available', 'LOCKED': 'locked', 'INUSE
 app.constant('DEVTYPE', { 'SMARTPHONE': 'smartphone', 'TABLET': 'tablet' });
 app.constant('USRPROFILE', { 'ADMINISTRATOR': 'administrator', 'TESTER': 'tester', 'INCUBATOR': 'incubator', 'SAVI': 'savi', 'BUSINESS': 'business' });
 app.constant('CONFIG', { 'MAXDEVICES4CURUSR': 3, 'REFRESHINTERVAL': 3000, 'MAXHRSINUSEBYB': 48, 'MAXHRSINUSEBYTIS': 5, 'EODTIMEHHMMSS': '190000' });
-app.constant('ENVIRONMENT', { 'DEBUG': true });
+app.constant('ENVIRONMENT', { 'DEBUG': false });
 app.constant('MESSAGES', { 'SERVICENOK': 'Functionality is not yet supported OR back-end service is unavailable!' });
 
 app.config(['$routeProvider',
