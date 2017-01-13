@@ -13,7 +13,7 @@ app.factory("Data", ['$http', '$location',
                     return results.data;
                 })
                 .catch(function(results) {
-                    console.log('Error in http get ' + q + ' //' + results.data);
+                    console.log('Error in http GET ' + q + ' //' + results.data);
                     return null;
                 });
         };
@@ -34,7 +34,7 @@ app.factory("Data", ['$http', '$location',
                         return null;
                 })
                 .catch(function(results) {
-                    console.log('Error in http post ' + q + ' //' + results.data);
+                    console.log('Error in http POST ' + q + ' //' + results.data);
                     return null;
                 });
         };
@@ -48,7 +48,7 @@ app.factory("Data", ['$http', '$location',
                     return results.data;
                 })
                 .catch(function(results) {
-                    console.log('Error in http put ' + q + ' //' + results.data);
+                    console.log('Error in http PUT ' + q + ' //' + results.data);
                     return null;
                 });
         };

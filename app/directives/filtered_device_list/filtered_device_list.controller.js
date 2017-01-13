@@ -98,13 +98,6 @@ app.controller('FilteredDeviceListController', function($scope, $modal, Data, DE
         // get the maximum hours a device can be in use by a Business teammember :
         var maxHoursInUse4B = parseInt(CONFIG.MAXHRSINUSEBYB);
 
-        /*
-        if (ENVIRONMENT.DEBUG) {
-            // >>> MM/dd/yyyy hh:mm:ss
-            device.statusobject.statusdate = '12/27/2016 12:10:00';         
-        };
-        */
-
         if (device.statusobject && device.statusobject.statusdate) {
 
             var statusdate = moment(device.statusobject.statusdate, 'DD/MM/YYYY hh:mm:ss');
@@ -209,7 +202,7 @@ app.controller('FilteredDeviceListController', function($scope, $modal, Data, DE
         });
     };
 
-    /*
+    /* OBSOLETE:
     $scope.deleteDevice = function(device) {
         
         if (!confirm('Are you sure to remove the device ' + device.boxid + ' ?')) 

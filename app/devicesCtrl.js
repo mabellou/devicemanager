@@ -111,7 +111,7 @@ app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $inte
         $scope.fetchDevices();
     };
 
-    /* NOT YET SUPPORTED
+    /* OBSOLETE:
     $scope.changeDeviceStatus = function(device) {
             console.log('devicesCtrl.changeDeviceStatus() : NOT SUPPORTED!');
             return;
@@ -230,9 +230,7 @@ app.controller('deviceEditCtrl', function($scope, $modalInstance, item, Data, US
     }
 
     $scope.saveDevice = function(device) {
-        // var devicetemp = angular.copy(device);
-        // delete devicetemp.name;
-
+        
         Data.put('device/' + device.id + '?token=' + sessionStorage.userToken, device).then(function(result) {
             if (!result) {
                 toastr.error(MESSAGES.SERVICENOK);
@@ -297,12 +295,7 @@ app.controller('deviceDeleteCtrl', function($scope, $modalInstance, item, Data, 
     };
 });
 
-
-
-
-
-
-/*
+/* OBSOLETE:
 app.controller('userLinkCtrl', function ($scope, $modalInstance, item, Data) {
 
   $scope.device = angular.copy(item.device);
