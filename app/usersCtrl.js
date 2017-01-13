@@ -36,8 +36,6 @@ app.controller('usersCtrl', function($scope, $modal, $filter, $location, $interv
     $scope.deleteUser = function(user, size) {
 
         // !! deleting a user is a logical delete where the enddate will be set equal to today
-        //// var user2delete = angular.copy(user);
-        //// var username = user2delete.firstname + ' ' + user2delete.lastname;
 
         var modalInstance = $modal.open({
             templateUrl: 'partials/userDelete.html',

@@ -15,6 +15,7 @@ app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $inte
     };
 
     $scope.fetchDevices = function(notifyUser) {
+        
         Data.get('devices?token=' + sessionStorage.userToken).then(function(data) {
             if (!data) {
                 toastr.error(MESSAGES.SERVICENOK);
@@ -254,6 +255,45 @@ app.controller('deviceEditCtrl', function($scope, $modalInstance, item, Data, US
     };
 });
 
+app.controller('deviceDeleteCtrl', function($scope, $modalInstance, item, Data, toastr) {
+
+    $scope.device = angular.copy(item);
+    $scope.device.fullname = $scope.device.boxid + ': ' + $scope.device.brand + ' ' + $scope.device.model;
+ 
+    $scope.action = 'deletedevice';
+    $scope.title = 'Delete Device'; 
+    $scope.buttonText = 'Delete Device';
+
+    $scope.confirm = function(device) {
+
+        var device2Delete = angular.copy(device);
+
+        /*
+        // set the user's enddate equal to today :
+        user2Delete.enddate = moment().format('DD/MM/YYYY');
+
+        Data.put('user/' + user2Delete.id + '?token=' + sessionStorage.userToken, user2Delete).then(function(result) {
+            if (!result) {
+                toastr.error(MESSAGES.SERVICENOK);
+                return;
+            };
+
+            if (result.error) {
+                toastr.warning('Technical problem with "deleting" user ' + user2Delete.fullname + Common.GetErrorMessage(ENVIRONMENT.DEBUG, result.error));
+                $modalInstance.close(null);
+            } else {
+                toastr.info('User ' + user2Delete.fullname + ' was removed successfully !');
+
+                $modalInstance.close(user2Delete);
+            };
+        });
+        */
+    };
+
+    $scope.cancel = function() {
+        $modalInstance.dismiss('Close');
+    };
+});
 
 
 

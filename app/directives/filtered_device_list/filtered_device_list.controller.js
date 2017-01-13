@@ -188,6 +188,29 @@ app.controller('FilteredDeviceListController', function($scope, $modal, Data, DE
         $scope.filters = {};
     };
 
+    $scope.deleteDevice = function(device, size) {
+
+        // !! deleting a device is a logical delete where the (device) status will become deleted .. 
+
+        var modalInstance = $modal.open({
+            templateUrl: 'partials/deviceDelete.html',
+            controller: 'deviceDeleteCtrl',
+            size: size,
+            resolve: {
+                item: function() {
+                    return device;
+                }
+            }
+        });
+        modalInstance.result.then(function(selectedObject) {
+            if (selectedObject) {
+                // update the 'model' : .. //TODO:
+                
+            }
+        });
+    };
+
+    /*
     $scope.deleteDevice = function(device) {
         
         if (!confirm('Are you sure to remove the device ' + device.boxid + ' ?')) 
@@ -197,7 +220,7 @@ app.controller('FilteredDeviceListController', function($scope, $modal, Data, DE
             // !! deleting a device is a logical delete where the (device) status will become deleted ..    
             var deleteRequest = { id: device.id, statusobject: { status: DEVSTATUS.DELETED, userobject: null } };
 
-            /* call the (VT) service to DELETE the concerned device .. */
+            // call the (VT) service to DELETE the concerned device ..
             Data.post('device/status' + '?token=' + sessionStorage.userToken, deleteRequest).then(function(data) {
                 if (!data) {
                     toastr.error(MESSAGES.SERVICENOK);
@@ -205,7 +228,7 @@ app.controller('FilteredDeviceListController', function($scope, $modal, Data, DE
                 }
 
                 if (!data.error) {
-                    /* update the local 'model' .. */
+                    // update the local 'model' ..
                     device.statusobject = { status: DEVSTATUS.DELETED, userobject: null };
                     toastr.info('Device ' + device.boxid + '   ' + device.brand + ' ' + device.model + ' was "deleted" !');
                 } else
@@ -213,6 +236,7 @@ app.controller('FilteredDeviceListController', function($scope, $modal, Data, DE
             });
         };
     };
+    */
 
     $scope.returnDevice = function(device) {
 
