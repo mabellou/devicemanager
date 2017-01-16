@@ -99,8 +99,28 @@
                 </div>
             </div>
         </th>
-        <th></th>
-        <th></th>
+        <th>
+            <!-- filter on Status ? -->
+            <div class="sw-filter">
+                <div class="nav-search" id="nav-search">
+                    <span class="input-icon">
+                        <input placeholder="Status" class="nav-search-input-sm" ng-model="filters['status']" ng-change="resetLimit();" autocomplete="off" type="text" focus>
+                        <i class="search-icon fa fa-search nav-search-icon"></i>
+                    </span>
+                </div>
+            </div>
+        </th>
+        <th>
+            <!-- filter on User (full) Name? -->
+            <div class="sw-filter">
+                <div class="nav-search" id="nav-search">
+                    <span class="input-icon">
+                        <input placeholder="User name" class="nav-search-input" ng-model="filters['userfullname']" ng-change="resetLimit();" autocomplete="off" type="text" focus>
+                        <i class="search-icon fa fa-search nav-search-icon"></i>
+                    </span>
+                </div>
+            </div>
+        </th>
         <th>
             <button type="button" class="btn btn-default btn-sm" ng-click="clearFilters()">Clear</button>
         </th>

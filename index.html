@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html ng-app="myApp">
 
-<body ng-cloak="">
+<body ng-cloak="" onkeydown="if(event.keyCode==13){event.keyCode=9; return event.keyCode}">
     <title>VAPOR TRAIL - Device Manager</title>
     <meta name="Description" content="Vapor Trail - Device Manager">
     <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" />
@@ -61,7 +61,7 @@
             $(this).siblings().removeClass('active');
         });
 
-        //  Scroll to To
+        // Scroll to Top ..
         $(window).scroll(function () {
             if ($(this).scrollTop() > 200) {
                 $("#backtotop").addClass("active");
@@ -69,7 +69,6 @@
                 $("#backtotop").removeClass("active");
             }
         });
-
         $('#backtotop').on("click", function () {
             $('body,html').animate({
                 scrollTop: 0

@@ -23,7 +23,18 @@ app.controller('devicesCtrl', function($scope, $modal, $filter, $location, $inte
             }
 
             if (!data.error) {
-                $scope.devices = data;
+                var devices = data.map(function(device) {
+                    // fields 'status' & 'userfullname' are replicated to allow easy filtering in list of devices .. 
+                    device.status = device.statusobject.status;
+                    if (device.statusobject.userobject)
+                        device.userfullname = device.statusobject.userobject.fullname;
+                    else
+                        device.userfullname = '';
+
+                    return device;
+                });
+                $scope.devices = devices;
+
                 if (notifyUser)
                     toastr.success('Devices were loaded successfully!');
             } else
