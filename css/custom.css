@@ -4,6 +4,38 @@ html{
 body{
   font-family: "Open Sans";
 }
+
+/* back 2 top scrolling */
+
+#backtotop {
+    border-radius: 50%;
+    line-height: 48px;
+    background-color: #333;
+    display: block;
+    position: fixed;
+    bottom: 50px;
+    text-align: center;
+    width: 50px;
+    right: 30px;
+    opacity: 0;
+    transition: all 0.4s ease 0s;
+    color: #FFF;
+    font-size: 11px;
+    height: 50px;
+    z-index: 99999;
+    cursor: pointer;
+}
+
+#backtotop:hover {
+    background-color: #d6644a;
+    transition: .4s;
+    color: #fff;
+}
+
+#backtotop.active {
+    opacity: 1;
+}
+
 /* ng-cloak */
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng.ng-cloak {
     display: none;
@@ -95,6 +127,20 @@ transition: width ease .15s;
 .nav-search .nav-search-input-sm {
 border: 1px solid #6fb3e0;
 width: 100px;
+height: 28px !important;
+padding-top: 2px;
+padding-bottom: 2px;
+border-radius: 4px !important;
+font-size: 13px;
+line-height: 1.3;
+color: #666 !important;
+z-index: 11;
+-webkit-transition: width ease .15s;
+transition: width ease .15s;
+}
+.nav-search .nav-search-input-xs {
+border: 1px solid #6fb3e0;
+width: 66px;
 height: 28px !important;
 padding-top: 2px;
 padding-bottom: 2px;
@@ -306,3 +352,34 @@ margin-top: -4.5px;
 .red { background-color: red; }
 .red-opacity-05 {background-color: rgba(255, 0, 0, 0.5);}   /* red with 50% opacity */
 .red-opacity-025 {background-color: rgba(255, 0, 0, 0.25);}   /* red with 25% opacity */
+
+/* Tooltip .. */
+.tooltip {
+    display: inline;
+    position: relative;
+}
+
+.tooltip:hover:after{
+    background: #333;
+    background: rgba(0,0,0,.8);
+    border-radius: 5px;
+    bottom: 26px;
+    color: #fff;
+    content: attr(title);
+    left: 20%;
+    padding: 5px 15px;
+    position: absolute;
+    z-index: 98;
+    width: 220px;
+}
+
+.tooltip:hover:before{
+    border: solid;
+    border-color: #333 transparent;
+    border-width: 6px 6px 0 6px;
+    bottom: 20px;
+    content: "";
+    left: 50%;
+    position: absolute;
+    z-index: 99;
+}

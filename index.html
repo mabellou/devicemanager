@@ -24,6 +24,8 @@
         <div class="page-content">
             <div ng-view="" id="ng-view"></div>
         </div>
+
+        <div id="backtotop"><i class="glyphicon glyphicon-chevron-up"></i></div>
     </div>
     <!-- Libraries -->
     <script src="js/angular.min.js"></script>
@@ -57,6 +59,22 @@
         $('nav a').click(function() {
             $(this).addClass('active');
             $(this).siblings().removeClass('active');
+        });
+
+        //  Scroll to To
+        $(window).scroll(function () {
+            if ($(this).scrollTop() > 200) {
+                $("#backtotop").addClass("active");
+            } else {
+                $("#backtotop").removeClass("active");
+            }
+        });
+
+        $('#backtotop').on("click", function () {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 1000);
+            return false;
         });
     });
     </script> 

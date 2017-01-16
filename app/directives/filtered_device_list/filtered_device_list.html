@@ -22,7 +22,17 @@
     </tr>
     <!-- filtering 4 some columns : -->
     <tr ng-show="!filteredStatus">
-        <th></th>
+        <th>
+            <!-- filter on Boxid ? -->
+            <div class="sw-filter">
+                <div class="nav-search" id="nav-search">
+                    <span class="input-icon">
+                        <input placeholder="Box ID" class="nav-search-input-sm" ng-model="filters['boxid']" ng-change="resetLimit();" autocomplete="off" type="text" focus>
+                        <i class="search-icon fa fa-search nav-search-icon"></i>
+                    </span>
+                </div>
+            </div>
+        </th>
         <th>
             <!-- filter on Brand ? -->
             <div class="sw-filter">
@@ -83,7 +93,7 @@
             <div class="sw-filter">
                 <div class="nav-search" id="nav-search">
                     <span class="input-icon">
-                        <input placeholder="Type" class="nav-search-input-sm" ng-model="filters['type']" ng-change="resetLimit();" autocomplete="off" type="text" focus>
+                        <input placeholder="Type" class="nav-search-input-xs" ng-model="filters['type']" ng-change="resetLimit();" autocomplete="off" type="text" focus>
                         <i class="search-icon fa fa-search nav-search-icon"></i>
                     </span>
                 </div>

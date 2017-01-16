@@ -17,6 +17,8 @@
 * How to 'active' the current main menu :
 -- http://fdietz.github.io/recipes-with-angular-js/urls-routing-and-partials/using-route-location-to-implement-a-navigation-menu.html
 
+* Back to Top scrolling :
+-- http://bootsnipp.com/snippets/QAaAg
 
 
 ??? 2Check :
