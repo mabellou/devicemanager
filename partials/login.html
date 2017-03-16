@@ -18,7 +18,7 @@
                             <label>Password</label>
                         </td>
                         <td>
-                            <input type="password" ng-model="password" class="ng-pristine ng-valid" ng-maxlength="20" maxlength="20" required placeholder="enter password" />
+                            <input type="password" ng-model="password" class="ng-pristine ng-valid" ng-maxlength="20" maxlength="20" required placeholder="enter password" ng-keypress="keypress($event, username, password)" />
                         </td>
                     </tr>
                     <tr>

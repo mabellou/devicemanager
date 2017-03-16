@@ -26,4 +26,10 @@ app.controller('loginCtrl', function($scope, $modal, $filter, $location, Creds) 
             $location.path('/home');
         }
     };
+
+    $scope.keypress = function(keyEvent, userName, password) {
+        if (keyEvent.which === 13) {
+            $scope.login(userName, password);
+        };
+    };
 });
